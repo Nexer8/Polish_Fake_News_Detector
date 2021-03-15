@@ -11,11 +11,21 @@ class CitationSpider(scrapy.Spider):
         yield from response.follow_all(detail_urls, callback=self.parse_detail)
 
         next_page_url = response.css('.next')
-        yield from response.follow_all(next_page_url, callback=self.parse)
+        # yield from response.follow_all(next_page_url, callback=self.parse)
 
     def parse_detail(self, response):
+        content = response.css('.hyphenate p::text').get()
+        if not content or len(content) < 5:
+            content = response.css('.hyphenate span::text').get()
+        
+        if not content or len(content) < 5:
+            content = ''.join(response.css('.hyphenate span::text').getall()[:-1])
+
+        content = content.replace('\xa0', ' ').replace('\"', '').replace('\'','').strip()
+
         yield {
-            'content': response.css('.hyphenate p::text').get().replace('\xa0', ' '),
+            'content': content,
+            'author': response.css('.person-name a::text').get(),
             'label': response.css('.ocena::text').get()
         }
 
