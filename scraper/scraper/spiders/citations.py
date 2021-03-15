@@ -11,7 +11,7 @@ class CitationSpider(scrapy.Spider):
         yield from response.follow_all(detail_urls, callback=self.parse_detail)
 
         next_page_url = response.css('.next')
-        # yield from response.follow_all(next_page_url, callback=self.parse)
+        yield from response.follow_all(next_page_url, callback=self.parse)
 
     def parse_detail(self, response):
         content = response.css('.hyphenate p::text').get()
