@@ -19,6 +19,7 @@ class CitationSpider(scrapy.Spider):
             content = response.css('.hyphenate span::text').get()
         
         if not content or len(content) < 5:
+            # last is cookie consent
             content = ''.join(response.css('.hyphenate span::text').getall()[:-1])
 
         content = content.replace('\xa0', ' ').replace('\"', '').replace('\'','').strip()
