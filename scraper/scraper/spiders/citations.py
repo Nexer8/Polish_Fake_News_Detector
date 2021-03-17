@@ -22,7 +22,8 @@ class CitationSpider(scrapy.Spider):
             # last is cookie consent
             content = ''.join(response.css('.hyphenate span::text').getall()[:-1])
 
-        content = content.replace('\xa0', ' ').replace('\"', '').replace('\'','').strip()
+        # remove non breaking space 
+        content = content.replace('\xa0', ' ').strip()
 
         yield {
             'content': content,
