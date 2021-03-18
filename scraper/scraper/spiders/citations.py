@@ -28,8 +28,8 @@ class CitationSpider(scrapy.Spider):
         # clean all html tags
         content = self.tag_pattern.sub(' ', content)
 
-        # get rid of nbsp and \n
-        content = content.replace('\xa0', ' ').replace('\n', ' ').strip()
+        # get rid of nbsp and \n, convert ampersand code to sign
+        content = content.replace('\xa0', ' ').replace('\n', ' ').replace('&amp;','&').strip()
 
         # remove unnecessary spaces
         content = self.spaces_pattern.sub(' ', content)
