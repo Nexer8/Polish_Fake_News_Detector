@@ -7,7 +7,8 @@ class CitationSpider(scrapy.Spider):
     start_urls = [
         'https://demagog.org.pl/wypowiedzi/'
     ]
-    pattern = re.compile(r'(</?[a-z].+?>)+')
+    tag_pattern = re.compile(r'<[^>]*>')
+    spaces_pattern = re.compile(r' +')
 
     def parse(self, response):
         detail_urls = response.css('.title-archive a')
@@ -25,10 +26,13 @@ class CitationSpider(scrapy.Spider):
             content = content.replace(date, '')
 
         # clean all html tags
-        content = self.pattern.sub('', content)
+        content = self.tag_pattern.sub(' ', content)
 
         # get rid of nbsp and \n
         content = content.replace('\xa0', ' ').replace('\n', ' ').strip()
+
+        # remove unnecessary spaces
+        content = self.spaces_pattern.sub(' ', content)
 
         yield {
             'content': content,
