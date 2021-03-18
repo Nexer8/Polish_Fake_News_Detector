@@ -20,8 +20,9 @@ class CitationSpider(scrapy.Spider):
         content = response.css('.hyphenate').get()
         date = response.css('.date-content').get()
 
-        # remove date tags and text
-        content = content.replace(date, '')
+        # remove date tags and text (if exists)
+        if date:
+            content = content.replace(date, '')
 
         # clean all html tags
         content = self.pattern.sub('', content)
