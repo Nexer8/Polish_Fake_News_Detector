@@ -26,7 +26,7 @@ class CitationSpider(scrapy.Spider):
             content = content.replace(date, '')
 
         # clean all html tags
-        content = self.tag_pattern.sub(' ', content)
+        content = self.tag_pattern.sub('', content)
 
         # get rid of nbsp and \n, convert ampersand code to sign, etc
         content = content.replace('\xa0', ' ').replace('\n', ' ').replace('&amp;','&').replace(';', ' - ').strip()
