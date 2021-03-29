@@ -1,5 +1,8 @@
 import re
 import string
+from lpmn_client.src.requester import Requester
+import zipfile
+import xml.etree.ElementTree as ET
 
 
 def remove_punctuation(text):
@@ -24,8 +27,16 @@ def remove_stopwords(tokenized_text):
     pass
 
 
-# TODO
-def lemmatize(no_stopwords_text):
-    # text = [wn.lemmatize(word) for word in no_stopwords_text]
-    # return text
-    pass
+def lemmatize(text):
+    requester = Requester('241393@student.pwr.edu.pl')
+    lpmn_query = 'any2txt|wcrft2({"guesser":false, "morfeusz2":true})'
+
+    string_ids = requester.upload_strings([text])
+    response = requester.process_query(lpmn_query, [id.text for id in string_ids])
+    requester.download_response(response[0], './lem.zip')
+
+    archive = zipfile.ZipFile('lem.zip', 'r')
+    data = archive.read(archive.namelist()[0])
+
+    text = [word.text for word in ET.fromstring(data).findall('chunk/sentence/tok/lex/base')]
+    return text
