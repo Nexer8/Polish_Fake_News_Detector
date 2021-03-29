@@ -42,27 +42,49 @@ def get_sentiment(text):
     response = requester.process_query(lpmn_query, [string_id.text for string_id in string_ids])
     requester.download_response(response[0], './sentiment.zip')
 
-    with zipfile.ZipFile('sentiment.zip', 'r') as archive:
-        with archive.open(archive.namelist()[0]) as data:
-            df = pd.read_csv(data, sep=';')
+    try:
+        with zipfile.ZipFile('sentiment.zip', 'r') as archive:
+            with archive.open(archive.namelist()[0]) as data:
+                df = pd.read_csv(data, sep=';')
 
-    sentiment_value = sum([int(entry) for entry in df['Polarity'].values if entry != 'None'])
+        sentiment_value = sum([int(entry) for entry in df['Polarity'].values if
+                               (type(entry) == str and entry.isnumeric()) or isinstance(entry, (int, float, complex))])
+    except Exception as e:
+        print(e)
+        sentiment_value = 0
+
     return sentiment_value
 
 
 def count_positive_words():
-    with zipfile.ZipFile('sentiment.zip', 'r') as archive:
-        with archive.open(archive.namelist()[0]) as data:
-            df = pd.read_csv(data, sep=';')
+    try:
+        with zipfile.ZipFile('sentiment.zip', 'r') as archive:
+            with archive.open(archive.namelist()[0]) as data:
+                df = pd.read_csv(data, sep=';')
 
-    positive_words = sum([1 for entry in df['Polarity'].values if entry != 'None' and int(entry) > 0])
-    return (positive_words / len(df['Polarity'])) * 100
+        positive_words = (sum([1 for entry in df['Polarity'].values if
+                               (type(entry) == str and entry.isnumeric() or isinstance(entry,
+                                                                                       (int, float, complex))) and int(
+                                   entry) > 0]) / len(df['Polarity'])) * 100
+    except Exception as e:
+        print(e)
+        positive_words = 0
+
+    return positive_words
 
 
 def count_negative_words():
-    with zipfile.ZipFile('sentiment.zip', 'r') as archive:
-        with archive.open(archive.namelist()[0]) as data:
-            df = pd.read_csv(data, sep=';')
+    try:
+        with zipfile.ZipFile('sentiment.zip', 'r') as archive:
+            with archive.open(archive.namelist()[0]) as data:
+                df = pd.read_csv(data, sep=';')
 
-    negative_words = sum([1 for entry in df['Polarity'].values if entry != 'None' and int(entry) < 0])
-    return (negative_words / len(df['Polarity'])) * 100
+        negative_words = (sum([1 for entry in df['Polarity'].values if
+                               (type(entry) == str and entry.isnumeric() or isinstance(entry,
+                                                                                       (int, float, complex))) and int(
+                                   entry) < 0]) / len(df['Polarity'])) * 100
+    except Exception as e:
+        print(e)
+        negative_words = 0
+
+    return negative_words
