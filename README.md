@@ -6,17 +6,23 @@ Miejsce na notatki: https://drive.google.com/drive/folders/1TcSwB1FPnDxofhXQszAL
 # Wiki
 Checklist:
 1. create venv
-`bash
-python3 -m venv venv
-`
+  ```bash
+  python3 -m venv venv
+  ```
+
 2. install dependencies
-`bash
+````bash
 . venv/bin/activate
 pip3 install -r requiremnts.txt
-`
+```
+
+
+
+##### Commands list
 
 scrap data:
-`bash
+
+````bash
 # go to scraper directory
 scrapy crawl citations -O citations.csv
-`
+````
