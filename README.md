@@ -11,7 +11,7 @@ Checklist:
   ```
 
 2. install dependencies
-````bash
+```bash
 . venv/bin/activate
 pip3 install -r requiremnts.txt
 ```
@@ -22,7 +22,7 @@ pip3 install -r requiremnts.txt
 
 scrap data:
 
-````bash
+```bash
 # go to scraper directory
 scrapy crawl citations -O citations.csv
-````
+```
