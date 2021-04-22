@@ -2,6 +2,9 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "resolutions": {
+    "babel-loader": "8.1.0"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.1",
     "@storybook/react": "^6.2.8",
