@@ -5,5 +5,5 @@ interface Props {
 }
 
 export const StatementVerifier: React.FC<Props> = () => {
-  return <div></div>;
+  return <div>StatementVerifier</div>;
 };
