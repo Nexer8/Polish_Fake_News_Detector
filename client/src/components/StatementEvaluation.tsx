@@ -12,7 +12,7 @@ const Container = styled.div<{ backgroundColor: string }>`
   display: flex;
   justify-content: space-around;
   background-color: ${({ backgroundColor }) => backgroundColor};
-  font-family: 'Playfair Display', 'Playfair Display', serif;
+  font-family: 'Playfair Display', serif;
   width: 100%;
   height: 170px;
   border-radius: 4px;
