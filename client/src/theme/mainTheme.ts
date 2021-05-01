@@ -7,6 +7,7 @@ export const theme = {
     lightDark: 'hsl(231, 7%, 40%)',
     mediumDark: 'hsl(232, 8%, 20%)',
     red: 'hsl(4, 64%, 47%)',
+    darkRed: 'hsl(1, 64%, 47%)',
   },
   fontWeight: {
     bold: 600,
