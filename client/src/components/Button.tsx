@@ -20,9 +20,12 @@ const Btn = styled.button<{
   activeColor: string;
   backgroundColor: string;
 }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
   width: 150px;
-  padding: 10px 15px;
+  padding: 7px 11px;
   background-color: ${({ backgroundColor }) => backgroundColor};
   border: none;
   border-radius: 4px;
@@ -38,10 +41,6 @@ const Btn = styled.button<{
   &:active {
     background-color: ${({ activeColor }) => activeColor};
   }
-`;
-
-const IconWrapper = styled.div`
-  float: right;
 `;
 
 export const Button: React.FC<Props> = ({
@@ -63,10 +62,7 @@ export const Button: React.FC<Props> = ({
       activeColor={activeColor}
     >
       {title}
-
-      <IconWrapper>
-        <Icon svg={icon} alt={title} />
-      </IconWrapper>
+      <Icon svg={icon} alt={title} />
     </Btn>
   );
 };
