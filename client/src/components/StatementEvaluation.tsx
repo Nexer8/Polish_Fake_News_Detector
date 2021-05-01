@@ -10,9 +10,9 @@ export interface Props {
 
 const Container = styled.div<{ backgroundColor: string }>`
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   background-color: ${({ backgroundColor }) => backgroundColor};
-  font-family: 'Playfair Display';
+  font-family: 'Playfair Display', 'Playfair Display', serif;
   width: 100%;
   height: 170px;
   border-radius: 4px;
@@ -23,7 +23,6 @@ const BaseColumn = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 35px;
 `;
 
 const Verdict = styled(BaseColumn)`
@@ -36,11 +35,11 @@ const Verdict = styled(BaseColumn)`
 const Explanation = styled(BaseColumn)`
   span {
     display: block;
-    font-size: ${({ theme }) => theme.fontSize.xl};
     text-align: center;
 
     &:last-child {
       margin-top: 20px;
+      font-size: ${({ theme }) => theme.fontSize.xl};
     }
   }
 `;
