@@ -25,3 +25,9 @@ Disabled.args = {
   placeholder: 'Wprowadź, bądź wklej treść wiadomości do zweryfikowania.',
   disabled: true,
 };
+
+export const BiggerFont = Template.bind({});
+BiggerFont.args = {
+  placeholder: 'Wprowadź, bądź wklej treść wiadomości do zweryfikowania.',
+  isBiggerFont: true,
+};
