@@ -20,4 +20,5 @@ export const theme = {
     xl: '2.4rem',
     xxl: '3.6rem',
   },
+  borderRadius: '4px',
 };
