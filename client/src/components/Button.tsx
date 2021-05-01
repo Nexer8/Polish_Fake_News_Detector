@@ -1,9 +1,9 @@
 import React from 'react';
 
-interface Props {
+export interface Props {
   // TODO: define props here
 }
 
 export const Button: React.FC<Props> = () => {
-  return <div></div>;
+  return <div>Test</div>;
 };
