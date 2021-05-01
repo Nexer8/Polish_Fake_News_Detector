@@ -13,7 +13,7 @@ const Container = styled.div<{ backgroundColor: string }>`
   justify-content: center;
   background-color: ${({ backgroundColor }) => backgroundColor};
   font-family: 'Playfair Display';
-  width: 500px;
+  width: 100%;
   height: 170px;
   border-radius: 4px;
 `;
@@ -23,7 +23,7 @@ const BaseColumn = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 25px;
+  padding: 0 35px;
 `;
 
 const Verdict = styled(BaseColumn)`
