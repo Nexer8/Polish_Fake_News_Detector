@@ -14,6 +14,10 @@ export const Textarea = styled.textarea<Props>`
   font-size: ${({ theme }) => theme.fontSize.m};
   padding: 16px;
 
+  ::placeholder {
+    color: ${({ theme }) => theme.colors.lightGray};
+  }
+
   ${({ isResizeable }) =>
     !isResizeable &&
     css`
