@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 export interface Props {
+  className?: string;
   svg: string;
   alt: string;
   size?: number;
@@ -38,6 +39,7 @@ const StyledWrapper = styled.div<{ size: number }>`
 `;
 
 export const Icon: React.FC<Props> = ({
+  className,
   svg,
   alt,
   size = 16,
@@ -46,7 +48,7 @@ export const Icon: React.FC<Props> = ({
   return (
     <>
       {hasTooltip ? (
-        <StyledWrapper size={size}>
+        <StyledWrapper size={size} className={className}>
           <StyledIcon
             cursor={'pointer'}
             src={svg}
@@ -58,6 +60,7 @@ export const Icon: React.FC<Props> = ({
         </StyledWrapper>
       ) : (
         <StyledIcon
+          className={className}
           cursor={'default'}
           src={svg}
           alt={alt}
