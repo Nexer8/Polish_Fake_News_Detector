@@ -1,9 +1,42 @@
 import React from 'react';
+import styled from 'styled-components';
 
-interface Props {
-  // TODO: define props here
+import { Icon } from 'components/Icon';
+
+const Container = styled.div`
+  width: 100%;
+  background-color: ${({ theme }) => theme.colors.mediumDark};
+  border: 1px solid ${({ theme }) => theme.colors.gray};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const LeftSide = styled.div`
+  b {
+    font-weight: ${({ theme }) => theme.fontWeight.bold};
+  }
+`;
+
+const RightSide = styled.div``;
+
+export interface Props {
+  category: string;
+  content: string;
+  icon: string;
 }
 
-export const StatementData: React.FC<Props> = () => {
-  return <div></div>;
+export const StatementData: React.FC<Props> = ({ category, content, icon }) => {
+  return (
+    <Container>
+      <LeftSide>
+        <b>{category}: </b>
+        <span>{content}</span>
+      </LeftSide>
+      <RightSide>
+        <Icon svg={icon} alt={category} />
+      </RightSide>
+    </Container>
+  );
 };
