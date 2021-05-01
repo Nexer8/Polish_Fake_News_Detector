@@ -1,21 +1,38 @@
+import React from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import { Input } from 'components/Input';
+import { Input, Props } from 'components/Input';
+import infoIcon from 'icons/info.svg';
 
 export default {
   title: 'Components/Input',
   component: Input,
 } as Meta;
 
-const Template: Story = (args) => <Input {...args} />;
+const Template: Story<Props> = (args) => <Input {...args} />;
 
 export const Normal = Template.bind({});
 Normal.args = {
-  placeholder: 'Wprowadź, bądź wklej treść wiadomości do zweryfikowania.',
+  value: '',
+  placeholder: 'Enter a value...',
+  icon: infoIcon,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => {},
 };
 
 export const Disabled = Template.bind({});
 Disabled.args = {
-  placeholder: 'Wprowadź, bądź wklej treść wiadomości do zweryfikowania.',
-  disabled: true,
+  value: '',
+  placeholder: 'Disabled state',
+  isDisabled: true,
+  icon: infoIcon,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => {},
+};
+
+export const Password = Template.bind({});
+Password.args = {
+  value: 'abc',
+  placeholder: 'Password',
+  type: 'password',
+  icon: infoIcon,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => {},
 };
