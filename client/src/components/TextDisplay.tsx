@@ -1,9 +1,17 @@
-import React from 'react';
+import styled from 'styled-components';
 
-interface Props {
-  // TODO: define props here
+export interface Props {
+  isBiggerFont?: boolean;
+  isBgDark?: boolean;
 }
 
-export const TextDisplay: React.FC<Props> = () => {
-  return <div></div>;
-};
+export const TextDisplay = styled.p<Props>`
+  font-size: ${({ theme, isBiggerFont }) =>
+    isBiggerFont ? theme.fontSize.m : theme.fontSize.s};
+  background-color: ${({ theme, isBgDark }) =>
+    isBgDark ? theme.colors.lightDark : 'none'};
+  border: ${({ theme, isBgDark }) =>
+    isBgDark ? 'none' : `1px solid ${theme.colors.mediumDark}`};
+  padding: 16px;
+  border-radius: ${({ theme }) => theme.borderRadius};
+`;
