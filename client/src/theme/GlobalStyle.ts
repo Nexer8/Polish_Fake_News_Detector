@@ -8,6 +8,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    outline-color: hsl(231, 61%, 45%);
   }
   
   html {
