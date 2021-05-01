@@ -18,6 +18,7 @@ export const Default = Template.bind({});
 Default.args = {
   title: 'Default',
   icon: reloadIcon,
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => {},
 };
 
 export const Failed = Template.bind({});
@@ -26,4 +27,5 @@ Failed.args = {
   icon: flagIcon,
   backgroundColor: theme.colors.red,
   hoverColor: theme.colors.darkRed,
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => {},
 };

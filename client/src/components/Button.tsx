@@ -11,6 +11,7 @@ export interface Props {
   backgroundColor?: string;
   hoverColor?: string;
   activeColor?: string;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const Btn = styled.button<{
@@ -50,10 +51,12 @@ export const Button: React.FC<Props> = ({
   backgroundColor = theme.colors.mediumDark,
   hoverColor = theme.colors.blue,
   activeColor = theme.colors.blue,
+  onClick,
 }) => {
   return (
     <Btn
       type="button"
+      onClick={onClick}
       color={color}
       backgroundColor={backgroundColor}
       hoverColor={hoverColor}
