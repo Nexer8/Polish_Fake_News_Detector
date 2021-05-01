@@ -5,12 +5,14 @@ import { Icon } from 'components/Icon';
 
 const Container = styled.div`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.mediumDark};
-  border: 1px solid ${({ theme }) => theme.colors.gray};
+  background-color: ${({ theme }) => theme.colors.dark};
+  border: 1px solid ${({ theme }) => theme.colors.mediumDark};
   border-radius: ${({ theme }) => theme.borderRadius};
+  font-size: ${({ theme }) => theme.fontSize.s};
   padding: 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const LeftSide = styled.div`
