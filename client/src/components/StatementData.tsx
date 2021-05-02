@@ -9,7 +9,7 @@ const Container = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.mediumDark};
   border-radius: ${({ theme }) => theme.borderRadius};
   font-size: ${({ theme }) => theme.fontSize.s};
-  padding: 10px;
+  padding: 7px 11px;
   display: flex;
   justify-content: space-between;
   align-items: center;
