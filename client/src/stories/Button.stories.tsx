@@ -26,6 +26,5 @@ Failed.args = {
   title: 'Fail',
   icon: flagIcon,
   backgroundColor: theme.colors.red,
-  hoverColor: theme.colors.darkRed,
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => {},
 };

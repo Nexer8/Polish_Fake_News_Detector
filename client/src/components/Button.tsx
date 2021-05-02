@@ -24,7 +24,8 @@ const Btn = styled.button<{
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  width: 150px;
+  min-width: 120px;
+  max-width: 300px;
   padding: 7px 11px;
   background-color: ${({ backgroundColor }) => backgroundColor};
   border: none;
@@ -32,6 +33,10 @@ const Btn = styled.button<{
   color: ${({ color }) => color};
   text-align: left;
   font-size: ${({ theme }) => theme.fontSize.s};
+
+  span {
+    padding-right: 11px;
+  }
 
   &:hover {
     background-color: ${({ hoverColor }) => hoverColor};
@@ -61,7 +66,7 @@ export const Button: React.FC<Props> = ({
       hoverColor={hoverColor}
       activeColor={activeColor}
     >
-      {title}
+      <span>{title}</span>
       <Icon svg={icon} alt={title} />
     </Btn>
   );
