@@ -164,3 +164,9 @@ def load_split_sets():
     y_test = pd.read_csv('data/y_test_tfidf.csv')
 
     return X_train_vect, X_test_vect, y_train, y_test
+
+
+def create_selected_features():
+    selected_features = pd.read_csv('data/tfidf_all_features.csv', usecols=['punctuation%','length','sentiment','positive_words%'])
+    df = pd.DataFrame(selected_features)
+    df.to_csv('data/tfidf_selected_features.csv')

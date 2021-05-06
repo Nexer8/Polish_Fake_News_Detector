@@ -1,6 +1,6 @@
 import pandas as pd
-from sklearn.feature_selection import chi2, SelectKBest
-from feature_creation.features import load_split_sets, create_features
+from feature_creation.features import load_split_sets, create_features, create_selected_features
+from features_test.chi2test import chi2test
 import models.random_forest as rf
 
 pd.set_option('display.max_rows', None)
@@ -17,20 +17,11 @@ df['label'].replace({'Fałsz': 0, 'Prawda': 1, 'Manipulacja': 2, 'Nieweryfikowal
 df = df[(df['label'] == 0) | (df['label'] == 1)]
 
 # Uncomment only when there is a need to recreate all the features
-# create_features(df)
+#create_features(df)
+#create_selected_features()
 
-# TODO: Add feature selection since there are too many features at the moment
-X_chi2 = pd.read_csv('data/X_train_tfidf.csv', dtype='float32', usecols = range(0, 9))
-y_chi2 = pd.read_csv('data/y_train_tfidf.csv')
-
-#chi2vals, pvals = chi2(X_chi2, y_chi2)
-
-# Chosen for k=5: question_mark%, punctuation%, length, sentiment, positive_words
-chosen_features = SelectKBest(chi2, k=5).fit(X_chi2, y_chi2).get_support()
-print(chosen_features)
-
-X_sel = SelectKBest(chi2, k=5).fit_transform(X_chi2, y_chi2)
-#print(X_sel)
+# Uncoment if another features test is needed
+#chi2test()
 
 X_train_vect, X_test_vect, y_train, y_test = load_split_sets()
 X_tfidf_feat = pd.read_csv('data/tfidf_all_features.csv')
