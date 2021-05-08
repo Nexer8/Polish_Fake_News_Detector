@@ -17,15 +17,17 @@ df['label'].replace({'Fałsz': 0, 'Prawda': 1, 'Manipulacja': 2, 'Nieweryfikowal
 df = df[(df['label'] == 0) | (df['label'] == 1)]
 
 # Uncomment only when there is a need to recreate all the features
-#create_features(df)
-#create_selected_features()
+# create_features(df)
+# create_selected_features()
 
-# Uncoment if another features test is needed
-#chi2test()
+# Uncomment if another features test is needed
+# chi2test()
 
-X_train_vect, X_test_vect, y_train, y_test = load_split_sets()
-X_tfidf_feat = pd.read_csv('data/tfidf_all_features.csv')
+X_tfidf_feat = pd.read_csv('data/tfidf_selected_features.csv')
+X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 
-# Selecting best Random Forest parameters using GridSearchCV
+# Selecting best Random Forest parameters using GridSearchCV (full output available in output/ directory)
 # Uncomment only when there is a need to reevaluate all the params
+# Current model: {'max_depth': 2, 'max_features': 'auto', 'min_samples_split': 6, 'n_estimators': 10}
+# mean_score_time=0.017376, mean_test_score=0.720370
 # rf.evaluate_best_params(X_tfidf_feat, df['label'])

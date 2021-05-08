@@ -3,3 +3,4 @@ venv
 data
 *.zip
 *.tmp
+*/__pycache__
