@@ -13,5 +13,6 @@ const Template: Story<Props> = (args) => <ReturnButton {...args} />;
 
 export const Normal = Template.bind({});
 Normal.args = {
-  content: 'Wróć do wszystkich ogłoszeń',
+  text: 'Wróć do wszystkich ogłoszeń',
+  path: '#'
 };

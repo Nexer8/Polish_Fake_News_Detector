@@ -24,15 +24,16 @@ const Container = styled.div`
 `;
 
 export interface Props {
-  content: string;
+  text: string;
+  path: string;
 }
 
-export const ReturnButton: React.FC<Props> = ({ content }) => {
+export const ReturnButton: React.FC<Props> = ({ text, path }) => {
   return (
     <Container>
-      <Link to="/#">
+      <Link to={path}>
         <Icon svg={arrowIcon} alt="navigation indicator" />
-        <span>{content}</span>
+        <span>{text}</span>
       </Link>
     </Container>
   );
