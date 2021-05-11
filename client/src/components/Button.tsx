@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from 'theme/mainTheme';
 import { Icon } from 'components/Icon';
 
@@ -11,6 +11,7 @@ export interface Props {
   backgroundColor?: string;
   hoverColor?: string;
   activeColor?: string;
+  isFullWidth?: boolean;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -19,13 +20,12 @@ const Btn = styled.button<{
   hoverColor: string;
   activeColor: string;
   backgroundColor: string;
+  isFullWidth: boolean;
 }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  min-width: 120px;
-  max-width: 300px;
   padding: 7px 11px;
   background-color: ${({ backgroundColor }) => backgroundColor};
   border: none;
@@ -33,6 +33,16 @@ const Btn = styled.button<{
   color: ${({ color }) => color};
   text-align: left;
   font-size: ${({ theme }) => theme.fontSize.s};
+
+  ${({ isFullWidth }) =>
+    isFullWidth
+      ? css`
+          width: 100%;
+        `
+      : css`
+          min-width: 120px;
+          max-width: 300px;
+        `}
 
   span {
     padding-right: 11px;
@@ -55,6 +65,7 @@ export const Button: React.FC<Props> = ({
   backgroundColor = theme.colors.mediumDark,
   hoverColor = theme.colors.blue,
   activeColor = theme.colors.blue,
+  isFullWidth = false,
   onClick,
 }) => {
   return (
@@ -65,6 +76,7 @@ export const Button: React.FC<Props> = ({
       backgroundColor={backgroundColor}
       hoverColor={hoverColor}
       activeColor={activeColor}
+      isFullWidth={isFullWidth}
     >
       <span>{title}</span>
       <Icon svg={icon} alt={title} />
