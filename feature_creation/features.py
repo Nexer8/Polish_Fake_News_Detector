@@ -178,6 +178,6 @@ def create_selected_features_for_single_text(text: str) -> pd.DataFrame:
         'sentiment': [get_sentiment(text)],
         'positive_words%': [count_positive_words()]
         }
-    selected_features = pd.DataFrame(d)
+    selected_features = pd.DataFrame(d).iloc[0]
 
     return selected_features
