@@ -20,7 +20,7 @@ const StyledWrapper = styled.div`
   align-items: center;
 `;
 
-const StyledInput = styled.input`
+export const StyledInput = styled.input`
   font-family: 'Source Sans Pro', sans-serif;
   width: 100%;
   border: none;
