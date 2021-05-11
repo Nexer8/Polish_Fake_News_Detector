@@ -37,7 +37,7 @@ def create_mlp_model(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
     # X_train_seq_pad = pad_sequences(X_train_seq, padding_length)
     # X_test_seq_pad = pad_sequences(X_test_seq, padding_length)
 
-    X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.25)
+    X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
     y_train_cat = to_categorical(y_train, 2)
     y_test_cat = to_categorical(y_test, 2)
 

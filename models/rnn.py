@@ -15,7 +15,7 @@ def create_rnn_model(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
     nmb_of_features = X_tfidf_feat.shape[1]
     batch_size = 32
 
-    X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.25)
+    X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
     y_train_cat = to_categorical(y_train, 2)
     y_test_cat = to_categorical(y_test, 2)
 
@@ -23,6 +23,7 @@ def create_rnn_model(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
     model.add(Embedding(1000, 32))
     model.add(LSTM(64, dropout=0.3, recurrent_dropout=0.3, recurrent_initializer='glorot_uniform', return_sequences=True))
     model.add(LSTM(32, dropout=0.3, recurrent_dropout=0.3, recurrent_initializer='glorot_uniform'))
+    model.add(Dense(256, activation='relu'))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(2, activation='softmax'))
     model.summary()

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from feature_creation.features import load_split_sets, create_features, create_selected_features
+from feature_creation.features import load_split_sets, create_features, create_selected_features, create_selected_features_for_single_text
 from features_test.chi2test import chi2test
 import models.random_forest as rf
 from keras.models import load_model
@@ -10,6 +10,7 @@ import models.mlp
 from models.rnn import create_rnn_model
 from models.rnn import predict_single_instance as rnn_predict_single_instance
 from models.mlp import create_mlp_model
+
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -58,10 +59,16 @@ rnn_model = load_model('models/rnn_model.h5')
 mlp_model = load_model('models/mlp_model.h5')
 
 
-for numb in range(100, 120):
-    print('Treść wypowiedzi:')
-    print(df['content'].iloc[numb])
-    print('Klasyfikacja: ', df['label'].iloc[numb])
-    prediction = models.rnn.predict_single_instance(rnn_model, X_tfidf_feat.iloc[numb])
-    print('Predykcja: ', prediction)
-    print('================================================')
+# Example of single instances predicitons
+# for numb in range(100, 120):
+#     print('Treść wypowiedzi:')
+#     print(df['content'].iloc[numb])
+#     print('Klasyfikacja: ', df['label'].iloc[numb])
+#     prediction = models.rnn.predict_single_instance(rnn_model, X_tfidf_feat.iloc[numb])
+#     print('Predykcja: ', prediction)
+#     print('================================================')
+
+text = "Pod względem przeliczenia na PKB Polska jest na pierwszym miejscu w Unii Europejskiej, jeżeli chodzi o skalę pomocy dla przedsiębiorców."# Fałsz
+selected_featrures_for_single_text = create_selected_features_for_single_text(text)
+
+print(selected_featrures_for_single_text)
