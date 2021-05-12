@@ -1,9 +1,10 @@
 import React from 'react';
+import { MainTemplate } from 'templates/MainTemplate';
 
 interface Props {
   // TODO: define props here
 }
 
 export const StatementVerifier: React.FC<Props> = () => {
-  return <div>StatementVerifier</div>;
+  return <MainTemplate>StatementVerifier</MainTemplate>;
 };

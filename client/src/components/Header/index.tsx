@@ -5,5 +5,5 @@ interface Props {
 }
 
 export const Header: React.FC<Props> = () => {
-  return <div></div>;
+  return <div>Header</div>;
 };
