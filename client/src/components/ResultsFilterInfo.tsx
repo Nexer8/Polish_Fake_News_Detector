@@ -18,7 +18,7 @@ export interface Props {
   content: string;
 }
 
-export const Navigation: React.FC<Props> = ({ content }) => {
+export const ResultsFilterInfo: React.FC<Props> = ({ content }) => {
   return (
     <Container>
       <Icon svg={infoIcon} alt="navigation indicator" />
