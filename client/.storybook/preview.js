@@ -6,6 +6,8 @@ import { addDecorator } from '@storybook/react';
 import GlobalStyle from '../src/theme/GlobalStyle';
 import { theme } from '../src/theme/mainTheme';
 
+import 'normalize.css';
+
 // enables Link usage in Storybook
 addDecorator((story) => (
   <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>

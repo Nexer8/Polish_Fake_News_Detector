@@ -8,6 +8,8 @@ import { store } from 'state/store';
 import GlobalStyle from 'theme/GlobalStyle';
 import { theme } from 'theme/mainTheme';
 
+import 'normalize.css';
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
