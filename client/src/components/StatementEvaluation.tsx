@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { theme } from 'theme/mainTheme';
+
+export enum VerdictType {
+  TRUTH = 'Prawda',
+  FAKE = 'Fałsz',
+}
+
 export interface Props {
-  // we still dunno how many classes are there, so cannot if-else that
-  backgroundColor: string;
   probability: number;
-  verdict: string;
+  verdict: VerdictType;
 }
 
 const Container = styled.div<{ backgroundColor: string }>`
@@ -44,15 +49,27 @@ const Explanation = styled(BaseColumn)`
   }
 `;
 
-const Row = styled.span``;
-
 export const StatementEvaluation: React.FC<Props> = ({
-  backgroundColor,
   probability,
   verdict,
 }) => {
+  const [color, setColor] = useState<string>('');
+
+  useEffect(() => {
+    switch (verdict) {
+      case VerdictType.TRUTH:
+        setColor(theme.colors.green);
+        break;
+      case VerdictType.FAKE:
+        setColor(theme.colors.red);
+        break;
+      default:
+        setColor(theme.colors.green);
+    }
+  }, [verdict]);
+
   return (
-    <Container backgroundColor={backgroundColor}>
+    <Container backgroundColor={color}>
       <Verdict>
         <span>{verdict}</span>
       </Verdict>

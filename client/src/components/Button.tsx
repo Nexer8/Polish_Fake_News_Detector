@@ -12,7 +12,9 @@ export interface Props {
   hoverColor?: string;
   activeColor?: string;
   isFullWidth?: boolean;
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  isDisabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const Btn = styled.button<{
@@ -66,11 +68,14 @@ export const Button: React.FC<Props> = ({
   hoverColor = theme.colors.blue,
   activeColor = theme.colors.blue,
   isFullWidth = false,
-  onClick,
+  type = 'button',
+  isDisabled = false,
+  onClick = () => {},
 }) => {
   return (
     <Btn
-      type="button"
+      disabled={isDisabled}
+      type={type}
       onClick={onClick}
       color={color}
       backgroundColor={backgroundColor}

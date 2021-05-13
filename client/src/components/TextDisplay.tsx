@@ -9,7 +9,7 @@ export const TextDisplay = styled.p<Props>`
   font-size: ${({ theme, isBiggerFont }) =>
     isBiggerFont ? theme.fontSize.m : theme.fontSize.s};
   background-color: ${({ theme, isBgDark }) =>
-    isBgDark ? theme.colors.lightDark : 'none'};
+    isBgDark ? theme.colors.mediumDark : 'none'};
   border: ${({ theme, isBgDark }) =>
     isBgDark ? 'none' : `1px solid ${theme.colors.mediumDark}`};
   padding: 16px;

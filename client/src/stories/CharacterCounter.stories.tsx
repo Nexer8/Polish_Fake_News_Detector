@@ -16,10 +16,12 @@ export const Valid = Template.bind({});
 Valid.args = {
   currentCount: 5,
   maxCharacters: 255,
+  isValid: true,
 };
 
 export const Invalid = Template.bind({});
 Invalid.args = {
   currentCount: 267,
   maxCharacters: 255,
+  isValid: false,
 };
