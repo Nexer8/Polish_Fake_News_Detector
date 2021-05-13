@@ -9,8 +9,10 @@ from sklearn.model_selection import StratifiedKFold
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import to_categorical
 
+from keras.utils import plot_model
 
-def create_model(nmb_of_features, optimizer='rmsprop', loss='categorical_crossentropy', dropout_rate=0.25):
+
+def create_model(nmb_of_features, optimizer='adam', loss='categorical_crossentropy', dropout_rate=0.25):
     
     model = Sequential()
     model.add(Dense(nmb_of_features, activation='relu'))
@@ -32,16 +34,19 @@ def create_model(nmb_of_features, optimizer='rmsprop', loss='categorical_crossen
     model.compile(optimizer=optimizer,
             loss=loss,
             metrics=['accuracy'])
-    
+
     return model
 
 
-def fit_mlp_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_crossentropy', epochs=60, batch_size=64):
-    model = create_model(optimizer, loss)
+def fit_mlp_model(X_tfidf_feat, labels, nmb_of_features=4, optimizer='rmsprop', loss='mse', epochs=60, batch_size=64, dropout_rate=0.25):
+    model = create_model(nmb_of_features, optimizer, loss, dropout_rate)
     X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
     y_train_cat = to_categorical(y_train, 2)
     y_test_cat = to_categorical(y_test, 2)
     history = model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), batch_size=batch_size, epochs=epochs)
+
+    model.summary()
+    plot_model(model, to_file='mlp_model.png', show_shapes=True,show_layer_names=True)
 
     return model
 

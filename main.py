@@ -44,7 +44,7 @@ X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 
 # Uncomment only when there is a need to do something about RNN model
 # Evaluate params
-evaluate_rnn_model_params()
+# evaluate_rnn_model_params(X_tfidf_feat, df['label'])
 # Create
 # rnn_model = fit_rnn_model(X_tfidf_feat, df['label'])
 # Save
@@ -54,7 +54,7 @@ evaluate_rnn_model_params()
 
 # Uncomment only when there is a need to do something about MLP model
 # Evaluate params
-evaluate_mlp_model_params()
+# evaluate_mlp_model_params(X_tfidf_feat, df['label'])
 # Create
 # mlp_model = fit_mlp_model(X_tfidf_feat, df['label'])
 # Save

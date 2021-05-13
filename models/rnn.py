@@ -9,6 +9,8 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.model_selection import StratifiedKFold
 from keras.utils import to_categorical
 
+from keras.utils import plot_model
+
 
 def create_model(optimizer='adam', loss='categorical_crossentropy'):
 
@@ -25,6 +27,8 @@ def create_model(optimizer='adam', loss='categorical_crossentropy'):
                 loss=loss,
                 metrics=['accuracy'])
 
+    model.summary()
+
     return model
 
 
@@ -34,6 +38,9 @@ def fit_rnn_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_cros
     y_train_cat = to_categorical(y_train, 2)
     y_test_cat = to_categorical(y_test, 2)
     history = model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), batch_size=batch_size, epochs=epochs)
+
+    model.summary()
+    plot_model(model, to_file='rnn_model.png', show_shapes=True,show_layer_names=True)
 
     return model
 
