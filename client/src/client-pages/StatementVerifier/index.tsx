@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { MainTemplate } from 'templates/MainTemplate';
+import { headers } from 'headers';
 import clipboardIcon from 'icons/clipboard.svg';
 import { Textarea } from 'components/Textarea';
 import { CharacterCounter } from './CharacterCounter';
@@ -62,7 +63,7 @@ export const StatementVerifier: React.FC<Props> = () => {
   };
 
   return (
-    <MainTemplate>
+    <MainTemplate  headerItems={headers.client}>
       <StyledWrapper>
         <StyledHeader>
           <h2>{HEADING}</h2>

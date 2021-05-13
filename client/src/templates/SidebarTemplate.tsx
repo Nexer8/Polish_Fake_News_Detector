@@ -1,10 +1,12 @@
 import { Header } from 'components/Header';
 import React from 'react';
 import styled from 'styled-components';
+import { Props as MenuItemProps } from 'components/Header/MenuItem';
 
 interface Props {
   children: React.ReactNode;
   sidebar: React.ReactNode;
+  headerItems: MenuItemProps[];
 }
 
 const StyledWrapper = styled.div`
@@ -45,10 +47,14 @@ const StyledChildren = styled.div`
   justify-content: center;
 `;
 
-export const SidebarTemplate: React.FC<Props> = ({ children, sidebar }) => {
+export const SidebarTemplate: React.FC<Props> = ({
+  children,
+  sidebar,
+  headerItems,
+}) => {
   return (
     <StyledWrapper>
-      <Header />
+      <Header items={headerItems} />
       <StyledContent>
         <StyledSidebar>{sidebar}</StyledSidebar>
         <StyledChildren>{children}</StyledChildren>

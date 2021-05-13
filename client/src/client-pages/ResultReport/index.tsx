@@ -10,6 +10,7 @@ import userIcon from 'icons/user.svg';
 import cancelIcon from 'icons/close.svg';
 import sendIcon from 'icons/send.svg';
 import { Navigation, NavigationItem } from 'components/Navigation';
+import { headers } from 'headers';
 import { ReturnButton } from 'components/ReturnButton';
 import { TextDisplay } from 'components/TextDisplay';
 import { Input } from 'components/Input';
@@ -146,6 +147,7 @@ export const ResultReport: React.FC<Props> = () => {
           }}
         />
       }
+      headerItems={headers.client}
     >
       <StyledWrapper>
         <ReturnButton text="Wróć do wyniku" path="TODO: provide path" />

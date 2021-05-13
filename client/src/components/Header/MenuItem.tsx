@@ -17,6 +17,7 @@ const Container = styled.div<{
   isActive: boolean;
 }>`
   span {
+    margin-left: 15px;
     font-size: ${({ theme }) => theme.fontSize.s};
     ${({ isActive }) =>
       isActive
@@ -31,9 +32,7 @@ const Container = styled.div<{
   a {
     text-decoration: none;
     display: flex;
-    justify-content: space-between;
     align-content: center;
-    width: 150px;
   }
 
   :hover {
