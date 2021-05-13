@@ -33,6 +33,7 @@ const StyledHeading = styled.h2`
 `;
 
 const ButtonWrapper = styled.div`
+  width: 150px;
   align-self: flex-end;
   margin-top: 10px;
 `;
@@ -78,6 +79,7 @@ export const EditorLogin: React.FC<Props> = () => {
         </InputWrapper>
         <ButtonWrapper>
           <Button
+            isFullWidth={true}
             title="Zaloguj"
             icon={keyIcon}
             onClick={() => {
