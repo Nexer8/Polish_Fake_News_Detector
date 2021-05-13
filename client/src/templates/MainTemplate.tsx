@@ -7,7 +7,7 @@ import plusActive from 'icons/plus-active.svg';
 import plusInactive from 'icons/plus-inactive.svg';
 import infoActive from 'icons/plus-active.svg';
 import infoInactive from 'icons/plus-inactive.svg';
-import routers from 'routes';
+import routes from 'routes';
 
 interface Props {
   children: React.ReactNode;
@@ -35,7 +35,7 @@ export const MainTemplate: React.FC<Props> = ({ children }) => {
       <Header
         items={[
           {
-            path: routers.statementVerifier,
+            path: routes.statementVerifier,
             isActive: true,
             text: 'Sprawdź wypowiedź',
             iconActive: plusActive,

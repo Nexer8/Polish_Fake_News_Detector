@@ -63,7 +63,7 @@ export const SidebarTemplate: React.FC<Props> = ({ children, sidebar }) => {
             iconInactive: flagInactive,
           },
           {
-            path: routes.login,
+            path: routes.editorLogin,
             isActive: false,
             text: 'Wyloguj',
             iconActive: logoutActive,
