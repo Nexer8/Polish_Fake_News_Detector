@@ -1,6 +1,6 @@
 import { Story, Meta } from '@storybook/react';
 
-import { Header, HeaderProps } from 'components/Header/Header';
+import { Header, HeaderProps } from 'components/Header';
 import checkActive from 'icons/check-active.svg';
 import checkInactive from 'icons/check-inactive.svg';
 import plusActive from 'icons/plus-active.svg';
