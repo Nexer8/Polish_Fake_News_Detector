@@ -1,6 +1,6 @@
 import { Story, Meta } from '@storybook/react';
 
-import { MenuItem, Props } from 'components/MenuItem';
+import { MenuItem, Props } from 'components/Header/MenuItem';
 import checkActive from 'icons/check-active.svg';
 import checkInactive from 'icons/check-inactive.svg';
 
