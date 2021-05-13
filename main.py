@@ -7,9 +7,9 @@ from keras.models import load_model
 
 import models.rnn
 import models.mlp
-from models.rnn import create_rnn_model
+from models.rnn import evaluate_rnn_model_params, fit_rnn_model
 from models.rnn import predict_single_instance as rnn_predict_single_instance
-from models.mlp import create_mlp_model
+from models.mlp import evaluate_mlp_model_params, fit_mlp_model
 
 
 pd.set_option('display.max_rows', None)
@@ -43,20 +43,24 @@ X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 
 
 # Uncomment only when there is a need to do something about RNN model
+# Evaluate params
+evaluate_rnn_model_params()
 # Create
-# rnn_model = create_rnn_model(X_tfidf_feat, df['label'])
+# rnn_model = fit_rnn_model(X_tfidf_feat, df['label'])
 # Save
 # rnn_model.save('models/rnn_model.h5')
 # Load
-rnn_model = load_model('models/rnn_model.h5')
+# rnn_model = load_model('models/rnn_model.h5')
 
 # Uncomment only when there is a need to do something about MLP model
+# Evaluate params
+evaluate_mlp_model_params()
 # Create
-# mlp_model = create_mlp_model(X_tfidf_feat, df['label'])
+# mlp_model = fit_mlp_model(X_tfidf_feat, df['label'])
 # Save
 # mlp_model.save('models/mlp_model.h5')
 # Load
-mlp_model = load_model('models/mlp_model.h5')
+# mlp_model = load_model('models/mlp_model.h5')
 
 
 # Examples of single instances predicitons
@@ -74,6 +78,6 @@ mlp_model = load_model('models/mlp_model.h5')
 # print('Treść wypowiedzi:')
 # print(text)
 # print('Klasyfikacja: 0')
-# prediction = models.rnn.predict_single_instance(rnn_model, selected_featrures_for_single_text)
+# prediction = models.mlp.predict_single_instance(mlp_model, selected_featrures_for_single_text)
 # # prediction = models.mlp.predict_single_instance(mlp_model, selected_featrures_for_single_text)
 # print('Predykcja: ', prediction)

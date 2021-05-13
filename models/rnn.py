@@ -1,23 +1,16 @@
 import pandas as pd
 import numpy as np
 
-from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.model_selection import train_test_split
-from keras.layers import Dense, Embedding, LSTM, Dropout
+from keras.layers import Dense, Embedding, LSTM
 from keras.models import Sequential
-from keras.preprocessing.sequence import pad_sequences
-from keras.preprocessing.text import Tokenizer
-from keras.losses import sparse_categorical_crossentropy
-from tensorflow.keras.utils import to_categorical
 
-def create_rnn_model(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import StratifiedKFold
+from keras.utils import to_categorical
 
-    nmb_of_features = X_tfidf_feat.shape[1]
-    batch_size = 32
 
-    X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
-    y_train_cat = to_categorical(y_train, 2)
-    y_test_cat = to_categorical(y_test, 2)
+def create_model(optimizer='adam', loss='categorical_crossentropy'):
 
     model = Sequential()
     model.add(Embedding(1000, 32))
@@ -28,15 +21,38 @@ def create_rnn_model(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
     model.add(Dense(2, activation='softmax'))
     model.summary()
 
-    model.compile(optimizer='adam',
-                loss='categorical_crossentropy',
+    model.compile(optimizer=optimizer,
+                loss=loss,
                 metrics=['accuracy'])
 
-    early_stopping = EarlyStopping(monitor='loss', patience=3)
+    return model
 
-    history = model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), batch_size=batch_size, epochs=10, callbacks=[early_stopping])
+
+def fit_rnn_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_crossentropy', epochs=60, batch_size=64):
+    model = create_model(optimizer, loss)
+    X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
+    y_train_cat = to_categorical(y_train, 2)
+    y_test_cat = to_categorical(y_test, 2)
+    history = model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), batch_size=batch_size, epochs=epochs)
 
     return model
+
+def evaluate_rnn_model_params(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
+
+    model = KerasClassifier(build_fn=create_model)
+
+    param_grid = {
+        'epochs': [20, 40, 60, 80],
+        'batch_size': [16, 32, 64, 128],
+        'optimizer': ['rmsprop', 'adam', 'SGD'],
+        'loss': ['mse', 'categorical_crossentropy']
+    }
+
+    grid = GridSearchCV(estimator=model, param_grid=param_grid, cv=StratifiedKFold(n_splits=5, random_state=1410, shuffle=True),
+                        n_jobs=-1, return_train_score=True)
+    grid_result = grid.fit(X_tfidf_feat, labels)
+
+    print(pd.DataFrame(grid_result.cv_results_).sort_values('mean_test_score', ascending=False))
 
 
 def predict_single_instance(model, instance):
