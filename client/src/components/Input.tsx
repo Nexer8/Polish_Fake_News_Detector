@@ -2,11 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { Icon } from 'components/Icon';
 
-type InputType = 'text' | 'password';
+type InputType = 'text' | 'password' | 'email' | string;
 
 export interface Props {
   icon: string;
+  id: string;
   isDisabled?: boolean;
+  name: string;
   placeholder: string;
   type?: InputType;
   value: string;
@@ -43,7 +45,9 @@ const StyledIcon = styled(Icon)`
 
 export const Input: React.FC<Props> = ({
   icon,
+  id,
   isDisabled = false,
+  name,
   placeholder,
   type = 'text',
   value,
@@ -52,7 +56,9 @@ export const Input: React.FC<Props> = ({
   return (
     <StyledWrapper>
       <StyledInput
+        id={id}
         disabled={isDisabled}
+        name={name}
         placeholder={placeholder}
         type={type}
         value={value}
