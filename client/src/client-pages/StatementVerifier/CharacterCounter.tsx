@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 
 import { Icon } from 'components/Icon';
 import warningIcon from 'icons/warning-red.svg';
@@ -7,6 +7,7 @@ import warningIcon from 'icons/warning-red.svg';
 export interface Props {
   currentCount: number;
   maxCharacters: number;
+  isValid: boolean;
 }
 
 const StyledWrapper = styled.div<{ isValid: boolean }>`
@@ -23,13 +24,8 @@ const StyledWrapper = styled.div<{ isValid: boolean }>`
 export const CharacterCounter: React.FC<Props> = ({
   currentCount,
   maxCharacters,
+  isValid,
 }) => {
-  const [isValid, setValid] = useState(true);
-
-  useEffect(() => {
-    currentCount > maxCharacters ? setValid(false) : setValid(true);
-  }, [currentCount, maxCharacters]);
-
   return (
     <StyledWrapper isValid={isValid}>
       <span>
