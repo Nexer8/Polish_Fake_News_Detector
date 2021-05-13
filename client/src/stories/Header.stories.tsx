@@ -7,6 +7,12 @@ import plusActive from 'icons/plus-active.svg';
 import plusInactive from 'icons/plus-inactive.svg';
 import infoActive from 'icons/plus-active.svg';
 import infoInactive from 'icons/plus-inactive.svg';
+import keyActive from 'icons/key-active.svg';
+import keyInactive from 'icons/key-inactive.svg';
+import flagActive from 'icons/flag.svg';
+import flagInactive from 'icons/flag-inactive.svg';
+import logoutActive from 'icons/logout-active.svg';
+import logoutInactive from 'icons/logout-inactive.svg';
 
 export default {
   title: 'Components/Header',
@@ -38,6 +44,39 @@ Guest.args = {
       text: 'Informacje',
       iconActive: infoActive,
       iconInactive: infoInactive,
+    },
+  ],
+};
+
+export const Login = Template.bind({});
+Login.args = {
+  items: [
+    {
+      path: '#',
+      isActive: true,
+      text: 'Logowanie',
+      iconActive: keyActive,
+      iconInactive: keyInactive,
+    },
+  ],
+};
+
+export const Admin = Template.bind({});
+Admin.args = {
+  items: [
+    {
+      path: '#',
+      isActive: true,
+      text: 'Zgłoszenia',
+      iconActive: flagActive,
+      iconInactive: flagInactive,
+    },
+    {
+      path: '#',
+      isActive: false,
+      text: 'Wyloguj',
+      iconActive: logoutActive,
+      iconInactive: logoutInactive,
     },
   ],
 };
