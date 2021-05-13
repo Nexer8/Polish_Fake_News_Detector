@@ -1,6 +1,11 @@
 import { Header } from 'components/Header';
 import React from 'react';
 import styled from 'styled-components';
+import flagActive from 'icons/flag.svg';
+import flagInactive from 'icons/flag-inactive.svg';
+import logoutActive from 'icons/logout-active.svg';
+import logoutInactive from 'icons/logout-inactive.svg';
+import routes from 'routes';
 
 interface Props {
   children: React.ReactNode;
@@ -48,7 +53,24 @@ const StyledChildren = styled.div`
 export const SidebarTemplate: React.FC<Props> = ({ children, sidebar }) => {
   return (
     <StyledWrapper>
-      <Header />
+      <Header
+        items={[
+          {
+            path: routes.editorReports,
+            isActive: true,
+            text: 'Zgłoszenia',
+            iconActive: flagActive,
+            iconInactive: flagInactive,
+          },
+          {
+            path: routes.login,
+            isActive: false,
+            text: 'Wyloguj',
+            iconActive: logoutActive,
+            iconInactive: logoutInactive,
+          },
+        ]}
+      />
       <StyledContent>
         <StyledSidebar>{sidebar}</StyledSidebar>
         <StyledChildren>{children}</StyledChildren>
