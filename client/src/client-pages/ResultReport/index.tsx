@@ -67,6 +67,7 @@ const categories: DropdownItem[] = [
 ];
 
 const StyledWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   max-width: 500px;
@@ -96,10 +97,14 @@ const StyledDateInput = styled(DateInput)`
 `;
 
 const StyledButtons = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: end;
   margin: 30px 0;
+  display: flex;
+  position: absolute;
+  right: 0;
+`;
+
+const StyledButtonMargin = styled.div`
+  margin-right: 15px;
 `;
 
 const StyledEvaluationWrapper = styled.div`
@@ -192,11 +197,13 @@ export const ResultReport: React.FC<Props> = () => {
               }
             />
             <StyledButtons>
-              <Button
-                title="Anuluj zgłoszenie"
-                icon={cancelIcon}
-                onClick={handleCancel}
-              />
+              <StyledButtonMargin>
+                <Button
+                  title="Anuluj zgłoszenie"
+                  icon={cancelIcon}
+                  onClick={handleCancel}
+                />
+              </StyledButtonMargin>
               <Button type="submit" title="Wyślij zgłoszenie" icon={sendIcon} />
             </StyledButtons>
           </form>
