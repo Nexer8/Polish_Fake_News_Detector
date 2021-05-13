@@ -5,6 +5,7 @@ import eyeIcon from 'icons/eye.svg';
 import penIcon from 'icons/pen.svg';
 import bookIcon from 'icons/book.svg';
 import { Navigation, NavigationItem } from 'components/Navigation';
+import { headers } from 'headers';
 
 interface Props {
   // TODO: define props here
@@ -33,6 +34,7 @@ export const EditorReport: React.FC<Props> = () => {
 
   return (
     <SidebarTemplate
+      headerItems={headers.editor}
       sidebar={
         <Navigation
           items={navigationItems}

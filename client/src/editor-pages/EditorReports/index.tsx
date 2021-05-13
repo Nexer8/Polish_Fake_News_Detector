@@ -1,5 +1,6 @@
 import React from 'react';
 import { SidebarTemplate } from 'templates/SidebarTemplate';
+import { headers } from 'headers';
 
 interface Props {
   // TODO: define props here
@@ -7,7 +8,10 @@ interface Props {
 
 export const EditorReports: React.FC<Props> = () => {
   return (
-    <SidebarTemplate sidebar={<div>TODO: Filters</div>}>
+    <SidebarTemplate
+      headerItems={headers.editor}
+      sidebar={<div>TODO: Filters</div>}
+    >
       EditorReports
     </SidebarTemplate>
   );

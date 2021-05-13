@@ -1,15 +1,12 @@
 import { Header } from 'components/Header';
 import React from 'react';
 import styled from 'styled-components';
-import flagActive from 'icons/flag.svg';
-import flagInactive from 'icons/flag-inactive.svg';
-import logoutActive from 'icons/logout-active.svg';
-import logoutInactive from 'icons/logout-inactive.svg';
-import routes from 'routes';
+import { Props as MenuItemProps } from 'components/Header/MenuItem';
 
 interface Props {
   children: React.ReactNode;
   sidebar: React.ReactNode;
+  headerItems: MenuItemProps[];
 }
 
 const StyledWrapper = styled.div`
@@ -50,27 +47,14 @@ const StyledChildren = styled.div`
   justify-content: center;
 `;
 
-export const SidebarTemplate: React.FC<Props> = ({ children, sidebar }) => {
+export const SidebarTemplate: React.FC<Props> = ({
+  children,
+  sidebar,
+  headerItems,
+}) => {
   return (
     <StyledWrapper>
-      <Header
-        items={[
-          {
-            path: routes.editorReports,
-            isActive: true,
-            text: 'Zgłoszenia',
-            iconActive: flagActive,
-            iconInactive: flagInactive,
-          },
-          {
-            path: routes.editorLogin,
-            isActive: false,
-            text: 'Wyloguj',
-            iconActive: logoutActive,
-            iconInactive: logoutInactive,
-          },
-        ]}
-      />
+      <Header items={headerItems} />
       <StyledContent>
         <StyledSidebar>{sidebar}</StyledSidebar>
         <StyledChildren>{children}</StyledChildren>

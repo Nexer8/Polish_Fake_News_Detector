@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import _uniqueId from 'lodash/uniqueId';
 
 import Routes from 'routes';
-import { MenuItem, Props } from 'components/Header/MenuItem';
+import { MenuItem, Props as MenuItemProps } from 'components/Header/MenuItem';
 import logo from 'icons/logo.svg';
 
-export interface HeaderProps {
-  items: Props[];
+export interface Props {
+  items: MenuItemProps[];
 }
 
 const Container = styled.nav`
@@ -24,7 +24,7 @@ const MenuItemWrapper = styled.div`
   margin-left: 30px;
 `;
 
-export const Header: React.FC<HeaderProps> = ({ items }) => {
+export const Header: React.FC<Props> = ({ items }) => {
   return (
     <Container>
       <MenuItem

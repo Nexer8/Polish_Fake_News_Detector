@@ -4,6 +4,7 @@ import { SidebarTemplate } from 'templates/SidebarTemplate';
 import eyeIcon from 'icons/eye.svg';
 import penIcon from 'icons/pen.svg';
 import { Navigation, NavigationItem } from 'components/Navigation';
+import { headers } from 'headers';
 
 interface Props {
   // TODO: define props here
@@ -37,6 +38,7 @@ export const ResultReport: React.FC<Props> = () => {
           }}
         />
       }
+      headerItems={headers.client}
     >
       ResultReport
     </SidebarTemplate>
