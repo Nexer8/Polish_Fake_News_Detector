@@ -8,6 +8,7 @@ import { EditorLogin } from 'editor-pages/EditorLogin';
 import { Result } from 'client-pages/Result';
 import { ResultReport } from 'client-pages/ResultReport';
 import { StatementVerifier } from 'client-pages/StatementVerifier';
+import { VerdictType } from 'components/StatementEvaluation';
 
 const Root: React.FC = () => {
   return (
@@ -24,7 +25,16 @@ const Root: React.FC = () => {
             <EditorLogin />
           </Route>
           <Route path={routes.result} exact>
-            <Result />
+            <Result
+              text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+              Tristique faucibus volutpat venenatis quisque sit egestas. 
+              Dapibus lectus blandit tempor, nulla sit adipiscing quis massa. 
+              Adipiscing eget est ipsum mauris in donec. 
+              Velit in at quam blandit ultricies et lorem leo, porta."
+              verdict={VerdictType.TRUTH}
+              probability={97}
+              path="http://polityk-hunter.pl/119lix3"
+            />
           </Route>
           <Route path={routes.resultReport} exact>
             <ResultReport />
