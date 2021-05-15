@@ -19,7 +19,7 @@ interface Props {
 }
 
 const InputWrapper = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const Container = styled.form`
@@ -29,13 +29,13 @@ const Container = styled.form`
 `;
 
 const StyledHeading = styled.h2`
-  margin-bottom: 35px;
+  margin-bottom: 30px;
 `;
 
 const ButtonWrapper = styled.div`
   width: 150px;
   align-self: flex-end;
-  margin-top: 10px;
+  margin-top: 15px;
 `;
 
 export const EditorLogin: React.FC<Props> = () => {
@@ -68,7 +68,7 @@ export const EditorLogin: React.FC<Props> = () => {
 
         <InputWrapper>
           <Input
-            icon={logoutIcon}
+            icon={keyIcon}
             id={PASSWORD_FIELD}
             name={PASSWORD_FIELD}
             onChange={formik.handleChange}
@@ -82,7 +82,7 @@ export const EditorLogin: React.FC<Props> = () => {
             type="submit"
             isFullWidth={true}
             title="Zaloguj"
-            icon={keyIcon}
+            icon={logoutIcon}
           />
         </ButtonWrapper>
       </Container>
