@@ -79,12 +79,10 @@ export const EditorLogin: React.FC<Props> = () => {
         </InputWrapper>
         <ButtonWrapper>
           <Button
+            type="submit"
             isFullWidth={true}
             title="Zaloguj"
             icon={keyIcon}
-            onClick={() => {
-              // TODO
-            }}
           />
         </ButtonWrapper>
       </Container>
