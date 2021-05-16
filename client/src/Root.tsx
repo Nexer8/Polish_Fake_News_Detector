@@ -8,6 +8,15 @@ import { EditorLogin } from 'editor-pages/EditorLogin';
 import { Result } from 'client-pages/Result';
 import { ResultReport } from 'client-pages/ResultReport';
 import { StatementVerifier } from 'client-pages/StatementVerifier';
+import { VerdictType } from 'components/StatementEvaluation';
+import { IResult } from 'models/Result';
+
+const testResultData: IResult = {
+  statement: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+  verdict: VerdictType.TRUTH,
+  probability: 97,
+  id: 'chyba-niepotrzebne-bo-jest-w-url',
+};
 
 const Root: React.FC = () => {
   return (
@@ -24,7 +33,7 @@ const Root: React.FC = () => {
             <EditorLogin />
           </Route>
           <Route path={routes.result} exact>
-            <Result />
+            <Result result={testResultData} />
           </Route>
           <Route path={routes.resultReport} exact>
             <ResultReport />
