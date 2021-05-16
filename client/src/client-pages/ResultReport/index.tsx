@@ -104,7 +104,7 @@ const StyledButtons = styled.div`
   right: 0;
 `;
 
-const StyledButtonMargin = styled.div`
+export const StyledButtonMargin = styled.div`
   margin-right: 15px;
 `;
 
