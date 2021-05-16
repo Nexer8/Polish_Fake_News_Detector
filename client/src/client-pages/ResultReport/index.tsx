@@ -24,12 +24,12 @@ import {
 } from 'components/StatementEvaluation';
 
 export const EMAIL_FIELD: string = 'email';
-const COMMENT_FIELD: string = 'comment';
+export const COMMENT_FIELD: string = 'comment';
 const NAVIGATION_ITEM_FORM: string = 'Formularz';
 const NAVIGATION_ITEM_PREVIEW: string = 'Zgłaszany wynik';
 const POLITICIAN_FIELD: string = 'politician';
 const DATE_FIELD: string = 'date';
-const CATEGORY_FIELD: string = 'category';
+export const CATEGORY_FIELD: string = 'category';
 const TEXT_DISPLAY_VALUE: string =
   'Wypowiedź wraz z wynikiem oraz uzupełnionymi danymi w formularzu zostanie przekazana do zespołu wykwalifikowanych edytorów. Po ręcznej weryfikacji, zostaniesz powiadomiony o rezultacie na podany adres e-mail. Prosimy, przekaż jak najwięcej informacji, które pomogą w weryfikacji treści sprawdzanej wypowiedzi. Diametralnie ułatwi to pracę naszemu zespołowi.';
 

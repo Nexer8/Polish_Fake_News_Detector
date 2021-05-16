@@ -10,10 +10,13 @@ import { ReturnButton } from 'components/ReturnButton';
 import { TextDisplay } from 'components/TextDisplay';
 import { Button } from 'components/Button';
 import { IResult } from 'models/Result';
+import { IReport } from 'models/Report';
 import { Icon } from 'components/Icon';
 import { StatementData } from 'components/StatementData';
-import { Select } from 'components/Select';
+import { Select, DropdownItem } from 'components/Select';
 import { Textarea } from 'components/Textarea';
+import { COMMENT_FIELD, CATEGORY_FIELD } from 'client-pages/ResultReport';
+import { useFormik } from 'formik';
 import Routes from 'routes';
 import eyeIcon from 'icons/eye.svg';
 import penIcon from 'icons/pen.svg';
@@ -31,7 +34,7 @@ const NAVIGATION_ITEM_REPORT = 'Zgłaszany wynik';
 const NAVIGATION_ITEM_DETAILS = 'Szczegóły';
 const NAVIGATION_ITEM_REVIEW = 'Recenzja';
 
-interface Props extends IResult {}
+interface Props extends IResult, IReport {}
 
 const navigationItems = [
   {
@@ -99,15 +102,39 @@ const StyledTextarea = styled(Textarea)`
   margin-top: 15px;
 `;
 
+const categories: DropdownItem[] = [
+  {
+    name: 'Lorem',
+  },
+  {
+    name: 'Ipsum',
+  },
+];
+
 export const EditorReport: React.FC<Props> = ({
   statement,
   verdict,
   probability,
+  category,
+  date,
+  politician,
+  reporter,
 }) => {
   const [
     navigationSelectedItem,
     setNavigationSelectedItem,
   ] = useState<NavigationItem>(navigationItems[0]);
+
+  const formik = useFormik({
+    initialValues: {
+      [COMMENT_FIELD]: '',
+      [CATEGORY_FIELD]: (null as unknown) as DropdownItem,
+    },
+    onSubmit: (values) => {
+      // TODO: handle submit
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
 
   const reportedResult = (
     <>
@@ -150,36 +177,34 @@ export const EditorReport: React.FC<Props> = ({
   const details = (
     <>
       <StyledHeader>Formularz zgłoszenia</StyledHeader>
-      <StatementData
-        category="E-mail"
-        content="lorem.ipsum@gmail.com"
-        icon={mailIcon}
-      />
+      <StatementData category="E-mail" content={reporter} icon={mailIcon} />
       <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
         {statement}
       </StyledTextDisplay>
       <StyledHeader>Dodatkowe informacje</StyledHeader>
-      <StatementDataWrapper>
-        <StatementData
-          category="Polityk"
-          content="lorem.ipsum@gmail.com"
-          icon={userIcon}
-        />
-      </StatementDataWrapper>
-      <StatementDataWrapper>
-        <StatementData
-          category="Data"
-          content="lorem.ipsum@gmail.com"
-          icon={calendarIcon}
-        />
-      </StatementDataWrapper>
-      <StatementDataWrapper>
-        <StatementData
-          category="Kategoria"
-          content="lorem.ipsum@gmail.com"
-          icon={financeIcon}
-        />
-      </StatementDataWrapper>
+      {politician && (
+        <StatementDataWrapper>
+          <StatementData
+            category="Polityk"
+            content={politician}
+            icon={userIcon}
+          />
+        </StatementDataWrapper>
+      )}
+      {date && (
+        <StatementDataWrapper>
+          <StatementData category="Data" content={date} icon={calendarIcon} />
+        </StatementDataWrapper>
+      )}
+      {category && (
+        <StatementDataWrapper>
+          <StatementData
+            category="Kategoria"
+            content={category}
+            icon={financeIcon}
+          />
+        </StatementDataWrapper>
+      )}
       <StyledDetailsButtons>
         <StyledButtonMargin>
           <ButtonWrapper>
@@ -204,14 +229,23 @@ export const EditorReport: React.FC<Props> = ({
   );
 
   const review = (
-    <>
+    <form onSubmit={formik.handleSubmit}>
       <StyledHeader>Recenzja edytorska</StyledHeader>
       <Select
-        items={[]}
-        placeholder="Wybierz ocenę  wypowiedzi"
-        onSelect={() => {}}
+        items={categories}
+        selectedItem={formik.values[CATEGORY_FIELD] as DropdownItem}
+        placeholder="Wybierz ocenę wypowiedzi"
+        onSelect={(item: DropdownItem) =>
+          formik.setFieldValue(CATEGORY_FIELD, item)
+        }
       />
-      <StyledTextarea placeholder="Wprowadź uzasadnienie wybranej oceny wypowiedzi." />
+      <StyledTextarea
+        id={COMMENT_FIELD}
+        name={COMMENT_FIELD}
+        onChange={formik.handleChange}
+        placeholder="Wprowadź komentarz dotyczący zgłoszenia."
+        value={formik.values[COMMENT_FIELD].toString()}
+      />
       <StyledDetailsButtons>
         <StyledButtonMargin>
           <ButtonWrapper>
@@ -232,10 +266,8 @@ export const EditorReport: React.FC<Props> = ({
           <Button title="Wstecz" icon={arrowLeftIcon} isFullWidth={true} />
         </ButtonWrapper>
       </StyledDetailsButtons>
-    </>
+    </form>
   );
-
-  const [displayedItem, setDisplayedItem] = useState(reportedResult);
 
   return (
     <SidebarTemplate
@@ -246,13 +278,6 @@ export const EditorReport: React.FC<Props> = ({
           selectedItem={navigationSelectedItem}
           onItemClick={(item: NavigationItem) => {
             setNavigationSelectedItem(item);
-            if (item.name === NAVIGATION_ITEM_REPORT) {
-              setDisplayedItem(reportedResult);
-            } else if (item.name === NAVIGATION_ITEM_DETAILS) {
-              setDisplayedItem(details);
-            } else if (item.name === NAVIGATION_ITEM_REVIEW) {
-              setDisplayedItem(review);
-            }
           }}
         />
       }
@@ -262,7 +287,11 @@ export const EditorReport: React.FC<Props> = ({
           text="Wróć do wszystkich ogłoszeń"
           path={Routes.editorReports}
         />
-        {displayedItem}
+        {navigationSelectedItem.name === NAVIGATION_ITEM_REPORT &&
+          reportedResult}
+
+        {navigationSelectedItem.name === NAVIGATION_ITEM_DETAILS && details}
+        {navigationSelectedItem.name === NAVIGATION_ITEM_REVIEW && review}
       </Container>
     </SidebarTemplate>
   );
