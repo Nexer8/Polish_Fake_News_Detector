@@ -18,6 +18,8 @@ const testResultData: IResult = {
   id: 'chyba-niepotrzebne-bo-jest-w-url',
 };
 
+import * as temp from './temp';
+
 const Root: React.FC = () => {
   return (
     <>
@@ -27,7 +29,7 @@ const Root: React.FC = () => {
             <EditorReport />
           </Route>
           <Route path={routes.editorReports} exact>
-            <EditorReports />
+            <EditorReports reports={temp.REPORTS} />
           </Route>
           <Route path={routes.editorLogin} exact>
             <EditorLogin />

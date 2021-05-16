@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
 
@@ -13,14 +13,29 @@ import { DateInput } from 'components/DateInput';
 import { Input } from 'components/Input';
 import { DropdownItem, Select } from 'components/Select';
 
-const CATEGORY_FIELD: string = 'category';
-const DATE_FROM_FIELD: string = 'dateFrom';
-const DATE_TO_FIELD: string = 'dateTo';
-const POLITICIAN_FIELD: string = 'politician';
+export const CATEGORY_FIELD: string = 'category';
+export const DATE_FROM_FIELD: string = 'dateFrom';
+export const DATE_TO_FIELD: string = 'dateTo';
+export const POLITICIAN_FIELD: string = 'politician';
+
+export type QueryParamsType = {
+  category?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  politician?: string;
+};
+
+export type FiltersFormType = {
+  category: DropdownItem;
+  dateFrom: string;
+  dateTo: string;
+  politician: string;
+};
 
 export interface Props {
-  onApplyClick: (form: { [x: string]: string | DropdownItem }) => void;
-  onCancelClick: () => void;
+  queryParams: QueryParamsType;
+  onApplyClick: (form: FiltersFormType) => void;
+  onResetClick: () => void;
 }
 
 // TODO: provide valid categories (prossibly fetch from backend)
@@ -79,21 +94,44 @@ const StyledButtonMargin = styled.div`
   margin-top: 10px;
 `;
 
-export const Filters: React.FC<Props> = ({ onApplyClick, onCancelClick }) => {
+export const Filters: React.FC<Props> = ({
+  queryParams,
+  onApplyClick,
+  onResetClick,
+}) => {
   const formik = useFormik({
     initialValues: {
-      [CATEGORY_FIELD]: (null as unknown) as DropdownItem,
-      [DATE_FROM_FIELD]: '',
-      [DATE_TO_FIELD]: '',
-      [POLITICIAN_FIELD]: '',
+      category: (null as unknown) as DropdownItem,
+      dateFrom: '',
+      dateTo: '',
+      politician: '',
     },
     onSubmit: (values) => {
       onApplyClick(values);
     },
-    onReset: (values) => {
-      onCancelClick();
+    onReset: () => {
+      onResetClick();
     },
   });
+
+  const setFiltersBasedOnQueryParams = () => {
+    queryParams?.category &&
+      formik.setFieldValue(CATEGORY_FIELD, {
+        name: queryParams.category,
+      } as DropdownItem);
+
+    queryParams?.dateFrom &&
+      formik.setFieldValue(DATE_FROM_FIELD, queryParams.dateFrom);
+
+    queryParams?.dateTo &&
+      formik.setFieldValue(DATE_TO_FIELD, queryParams.dateTo);
+
+    queryParams?.politician &&
+      formik.setFieldValue(POLITICIAN_FIELD, queryParams.politician);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(setFiltersBasedOnQueryParams, []);
 
   return (
     <StyledWrapper>
@@ -109,12 +147,12 @@ export const Filters: React.FC<Props> = ({ onApplyClick, onCancelClick }) => {
           onChange={formik.handleChange}
           placeholder="Polityk"
           type={POLITICIAN_FIELD}
-          value={formik.values[POLITICIAN_FIELD].toString()}
+          value={formik.values.politician}
         />
         <StyledSelect>
           <Select
             items={categories}
-            selectedItem={formik.values[CATEGORY_FIELD] as DropdownItem}
+            selectedItem={formik.values.category}
             placeholder="Kategoria"
             onSelect={(item: DropdownItem) =>
               formik.setFieldValue(CATEGORY_FIELD, item)
@@ -127,7 +165,7 @@ export const Filters: React.FC<Props> = ({ onApplyClick, onCancelClick }) => {
           name={DATE_FROM_FIELD}
           onChange={formik.handleChange}
           placeholder="Data wypowiedzi od"
-          value={formik.values[DATE_FROM_FIELD].toString()}
+          value={formik.values.dateFrom}
         />
         <StyledDateInput
           className={DATE_TO_FIELD}
@@ -135,7 +173,7 @@ export const Filters: React.FC<Props> = ({ onApplyClick, onCancelClick }) => {
           name={DATE_TO_FIELD}
           onChange={formik.handleChange}
           placeholder="Data wypowiedzi do"
-          value={formik.values[DATE_TO_FIELD].toString()}
+          value={formik.values.dateTo}
         />
         <StyledButtons>
           <Button type="submit" title="Zastosuj" icon={applyIcon} isFullWidth />
@@ -144,7 +182,7 @@ export const Filters: React.FC<Props> = ({ onApplyClick, onCancelClick }) => {
               type="reset"
               title="Resetuj"
               icon={closeIcon}
-              onClick={onCancelClick}
+              onClick={onResetClick}
               isFullWidth
             />
           </StyledButtonMargin>
