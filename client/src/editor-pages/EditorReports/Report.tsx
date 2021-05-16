@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import closeIcon from 'icons/close.svg';
+import reviewIcon from 'icons/arrow-right.svg';
 import categoryIcon from 'icons/finance.svg';
 import calendarIcon from 'icons/calendar.svg';
 import politicianIcon from 'icons/user.svg';
@@ -48,10 +48,10 @@ export const Report: React.FC<Props> = ({ report, onReviewClick }) => {
   return (
     <StyledWrapper>
       <StyledHeader>
-        <StyledTitle>Zgłoszenie {report.id}</StyledTitle>
+        <StyledTitle>Zgłoszenie #{report.id}</StyledTitle>
         <Button
           title="Zrecenzuj"
-          icon={closeIcon}
+          icon={reviewIcon}
           onClick={() => onReviewClick(report.id)}
         />
       </StyledHeader>
