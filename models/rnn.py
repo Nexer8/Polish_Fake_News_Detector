@@ -32,7 +32,7 @@ def create_model(optimizer='SGD', loss='categorical_crossentropy'):
     return model
 
 
-def fit_rnn_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_crossentropy', epochs=80, batch_size=128):
+def fit_rnn_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_crossentropy', epochs=40, batch_size=64):
     model = create_model(optimizer, loss)
     X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
     y_train_cat = to_categorical(y_train, 2)
