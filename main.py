@@ -50,7 +50,7 @@ X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 # Save
 # rnn_model.save('models/rnn_model.h5')
 # Load
-# rnn_model = load_model('models/rnn_model.h5')
+rnn_model = load_model('models/rnn_model.h5')
 
 # Uncomment only when there is a need to do something about MLP model
 # Evaluate params
@@ -60,7 +60,7 @@ X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 # Save
 # mlp_model.save('models/mlp_model.h5')
 # Load
-# mlp_model = load_model('models/mlp_model.h5')
+mlp_model = load_model('models/mlp_model.h5')
 
 
 # Examples of single instances predicitons
@@ -73,11 +73,11 @@ X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 #     print('================================================')
 
 # Example of creating selected features for single text and prediction
-# text = "Pod względem przeliczenia na PKB Polska jest na pierwszym miejscu w Unii Europejskiej, jeżeli chodzi o skalę pomocy dla przedsiębiorców."# Fałsz
-# selected_featrures_for_single_text = create_selected_features_for_single_text(text)
-# print('Treść wypowiedzi:')
-# print(text)
-# print('Klasyfikacja: 0')
+text = "Pod względem przeliczenia na PKB Polska jest na pierwszym miejscu w Unii Europejskiej, jeżeli chodzi o skalę pomocy dla przedsiębiorców."# Fałsz
+selected_featrures_for_single_text = create_selected_features_for_single_text(text)
+print('Treść wypowiedzi:')
+print(text)
+print('Klasyfikacja: 0')
+prediction = models.rnn.predict_single_instance(rnn_model, selected_featrures_for_single_text)
 # prediction = models.mlp.predict_single_instance(mlp_model, selected_featrures_for_single_text)
-# # prediction = models.mlp.predict_single_instance(mlp_model, selected_featrures_for_single_text)
-# print('Predykcja: ', prediction)
+print('Predykcja: ', prediction)
