@@ -38,7 +38,7 @@ def create_model(nmb_of_features, optimizer='adam', loss='categorical_crossentro
     return model
 
 
-def fit_mlp_model(X_tfidf_feat, labels, nmb_of_features=4, optimizer='rmsprop', loss='mse', epochs=60, batch_size=64, dropout_rate=0.25):
+def fit_mlp_model(X_tfidf_feat, labels, nmb_of_features=4, optimizer='adam', loss='categorical_crossentropy', epochs=20, batch_size=16, dropout_rate=0.25):
     model = create_model(nmb_of_features, optimizer, loss, dropout_rate)
     X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
     y_train_cat = to_categorical(y_train, 2)

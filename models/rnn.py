@@ -12,7 +12,7 @@ from keras.utils import to_categorical
 from keras.utils import plot_model
 
 
-def create_model(optimizer='adam', loss='categorical_crossentropy'):
+def create_model(optimizer='SGD', loss='categorical_crossentropy'):
 
     model = Sequential()
     model.add(Embedding(1000, 32))
@@ -32,7 +32,7 @@ def create_model(optimizer='adam', loss='categorical_crossentropy'):
     return model
 
 
-def fit_rnn_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_crossentropy', epochs=60, batch_size=64):
+def fit_rnn_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_crossentropy', epochs=80, batch_size=128):
     model = create_model(optimizer, loss)
     X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
     y_train_cat = to_categorical(y_train, 2)
