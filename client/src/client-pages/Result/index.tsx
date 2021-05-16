@@ -13,7 +13,7 @@ import { IResult } from 'models/Result';
 import reloadIcon from 'icons/reload.svg';
 import infoIcon from 'icons/info.svg';
 import flagIcon from 'icons/flag.svg';
-import Routes from 'routes';
+import Routes, { domain } from 'routes';
 
 const Container = styled.div`
   display: flex;
@@ -113,9 +113,7 @@ export const Result: React.FC<IResult> = ({
           </ButtonWrapper>
         </HeaderRow>
         <StyledHeader>Udostępnij wynik</StyledHeader>
-        {/* TODO add address for some config */}
-        {/* placeholder for address */}
-        <Share path={'http://weryfikator.pl' + path} />
+        <Share path={domain + path} />
       </Container>
     </MainTemplate>
   );
