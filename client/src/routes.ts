@@ -8,5 +8,4 @@ const Routes = {
   wildcard: '*',
 };
 
-export const domain = 'http://weryfikator.pl';
 export default Routes;

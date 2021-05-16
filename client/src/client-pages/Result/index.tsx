@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 
+import routes from 'routes';
+import { IResult } from 'models/Result';
 import { MainTemplate } from 'templates/MainTemplate';
 import { headers } from 'headers';
 import { Button } from 'components/Button';
@@ -9,11 +11,13 @@ import { TextDisplay } from 'components/TextDisplay';
 import { Icon } from 'components/Icon';
 import { StatementEvaluation } from 'components/StatementEvaluation';
 import { Share } from 'client-pages/StatementVerifier/Share';
-import { IResult } from 'models/Result';
 import reloadIcon from 'icons/reload.svg';
 import infoIcon from 'icons/info.svg';
 import flagIcon from 'icons/flag.svg';
-import Routes, { domain } from 'routes';
+
+export interface Props {
+  result: IResult;
+}
 
 const Container = styled.div`
   display: flex;
@@ -55,14 +59,9 @@ const StyledHeader = styled.h2`
   margin-bottom: 30px;
 `;
 
-export const Result: React.FC<IResult> = ({
-  statement,
-  probability,
-  verdict,
-}) => {
+export const Result: React.FC<Props> = ({ result }) => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
-  const path = Routes.resultReport.replace(':id', id);
 
   return (
     <MainTemplate headerItems={headers.client}>
@@ -75,13 +74,13 @@ export const Result: React.FC<IResult> = ({
               title="Sprawdź inną"
               icon={reloadIcon}
               onClick={() => {
-                history.push(Routes.statementVerifier);
+                history.push(routes.statementVerifier);
               }}
             />
           </ButtonWrapper>
         </HeaderRow>
         <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
-          {statement}
+          {result.statement}
         </StyledTextDisplay>
         <HeaderRow>
           <h2>Ocena wypowiedzi przez model</h2>
@@ -93,8 +92,8 @@ export const Result: React.FC<IResult> = ({
         </HeaderRow>
         <StyledStamentEvaluation>
           <StatementEvaluation
-            probability={probability}
-            verdict={verdict}
+            probability={result.probability}
+            verdict={result.verdict}
           ></StatementEvaluation>
         </StyledStamentEvaluation>
         <HeaderRow>
@@ -107,13 +106,13 @@ export const Result: React.FC<IResult> = ({
               title="Zgłoś wynik"
               icon={flagIcon}
               onClick={() => {
-                history.push(path);
+                history.push(routes.resultReport.replace(':id', id));
               }}
             />
           </ButtonWrapper>
         </HeaderRow>
         <StyledHeader>Udostępnij wynik</StyledHeader>
-        <Share path={domain + path} />
+        <Share path={window.location.href} />
       </Container>
     </MainTemplate>
   );
