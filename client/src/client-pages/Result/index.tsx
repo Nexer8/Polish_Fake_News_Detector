@@ -7,27 +7,23 @@ import { headers } from 'headers';
 import { Button } from 'components/Button';
 import { TextDisplay } from 'components/TextDisplay';
 import { Icon } from 'components/Icon';
-import {
-  StatementEvaluation,
-  VerdictType,
-} from 'components/StatementEvaluation';
+import { StatementEvaluation } from 'components/StatementEvaluation';
 import { Share } from 'client-pages/StatementVerifier/Share';
+import { IResult } from 'models/Result';
 import reloadIcon from 'icons/reload.svg';
 import infoIcon from 'icons/info.svg';
 import flagIcon from 'icons/flag.svg';
 import Routes from 'routes';
 
-interface Props {
-  text: string;
-  probability: number;
-  verdict: VerdictType;
-  path: string;
-}
-
 const Container = styled.div`
-  width: 500px;
   display: flex;
   flex-direction: column;
+  max-width: 500px;
+  width: 100%;
+  margin-bottom: 50px;
+  @media only screen and (min-width: 768px) {
+    width: 50%;
+  }
 `;
 
 const HeaderRow = styled.div`
@@ -42,11 +38,11 @@ const ButtonWrapper = styled.div`
 
 const StyledTextDisplay = styled(TextDisplay)`
   margin-top: 30px;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 `;
 
 const StyledStamentEvaluation = styled.div`
-  margin-top: 40px;
+  margin-top: 30px;
   margin-bottom: 30px;
 `;
 
@@ -56,17 +52,17 @@ const ProblemsText = styled.div`
 
 const StyledHeader = styled.h2`
   margin-top: 50px;
-  margin-bottom: 35px;
+  margin-bottom: 30px;
 `;
 
-export const Result: React.FC<Props> = ({
-  text,
+export const Result: React.FC<IResult> = ({
+  statement,
   probability,
   verdict,
-  path,
 }) => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
+  const path = Routes.resultReport.replace(':id', id);
 
   return (
     <MainTemplate headerItems={headers.client}>
@@ -85,11 +81,15 @@ export const Result: React.FC<Props> = ({
           </ButtonWrapper>
         </HeaderRow>
         <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
-          {text}
+          {statement}
         </StyledTextDisplay>
         <HeaderRow>
           <h2>Ocena wypowiedzi przez model</h2>
-          <Icon svg={infoIcon} alt="Information icon" />
+          <Icon
+            svg={infoIcon}
+            hasTooltip={true}
+            alt="Werdykt i pewność, z jaką go stwierdzamy"
+          />
         </HeaderRow>
         <StyledStamentEvaluation>
           <StatementEvaluation
@@ -107,13 +107,15 @@ export const Result: React.FC<Props> = ({
               title="Zgłoś wynik"
               icon={flagIcon}
               onClick={() => {
-                history.push(Routes.resultReport.replace(':id', id));
+                history.push(path);
               }}
             />
           </ButtonWrapper>
         </HeaderRow>
         <StyledHeader>Udostępnij wynik</StyledHeader>
-        <Share path={path} />
+        {/* TODO add address for some config */}
+        {/* placeholder for address */}
+        <Share path={'http://weryfikator.pl' + path} />
       </Container>
     </MainTemplate>
   );
