@@ -12,5 +12,5 @@ const Template: Story<Props> = (args) => <Filters {...args} />;
 export const Default = Template.bind({});
 Default.args = {
   onApplyClick: () => {},
-  onCancelClick: () => {},
+  onResetClick: () => {},
 };
