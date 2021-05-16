@@ -9,6 +9,8 @@ import { Result } from 'client-pages/Result';
 import { ResultReport } from 'client-pages/ResultReport';
 import { StatementVerifier } from 'client-pages/StatementVerifier';
 
+import * as temp from './temp';
+
 const Root: React.FC = () => {
   return (
     <>
@@ -18,7 +20,7 @@ const Root: React.FC = () => {
             <EditorReport />
           </Route>
           <Route path={routes.editorReports} exact>
-            <EditorReports />
+            <EditorReports reports={temp.REPORTS} />
           </Route>
           <Route path={routes.editorLogin} exact>
             <EditorLogin />
