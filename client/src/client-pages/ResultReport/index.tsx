@@ -23,7 +23,7 @@ import {
   VerdictType,
 } from 'components/StatementEvaluation';
 
-const EMAIL_FIELD: string = 'email';
+export const EMAIL_FIELD: string = 'email';
 const COMMENT_FIELD: string = 'comment';
 const NAVIGATION_ITEM_FORM: string = 'Formularz';
 const NAVIGATION_ITEM_PREVIEW: string = 'Zgłaszany wynik';
