@@ -1,3 +1,4 @@
+from models.boosting_classifier import tuning_model_metaparameters
 import pandas as pd
 import numpy as np
 from feature_creation.features import load_split_sets, create_features, create_selected_features, create_selected_features_for_single_text
@@ -41,6 +42,11 @@ X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 # mean_score_time=0.017376, mean_test_score=0.720370
 # rf.evaluate_best_params(X_tfidf_feat, df['label'])
 
+# Gradient boosting with grid search for it, uncoment ONLY when dataset changes much
+# tuning_model_metaparameters(X_tfidf_feat, df['label'])
+# current best parameters are n_estimators=1000, learning_rate=0.7,
+#       max_depth=100, max_features='auto', min_samples_leaf=1, min_samples_split=4
+# gbc = create_boosting_model(X_tfidf_feat, df['label'])
 
 # Uncomment only when there is a need to do something about RNN model
 # Evaluate params
