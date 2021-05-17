@@ -4,12 +4,11 @@ import styled from 'styled-components';
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import { Navigation, NavigationItem } from 'components/Navigation';
 import { StatementEvaluation } from 'components/StatementEvaluation';
-import { StyledButtonMargin } from 'client-pages/ResultReport';
 import { headers } from 'headers';
 import { ReturnButton } from 'components/ReturnButton';
 import { TextDisplay } from 'components/TextDisplay';
 import { Button } from 'components/Button';
-import { IResult } from 'models/Result';
+import { useHistory } from 'react-router-dom';
 import { IReport } from 'models/Report';
 import { Icon } from 'components/Icon';
 import { StatementData } from 'components/StatementData';
@@ -29,12 +28,15 @@ import mailIcon from 'icons/mail.svg';
 import calendarIcon from 'icons/calendar.svg';
 import userIcon from 'icons/user.svg';
 import financeIcon from 'icons/finance.svg';
+import sendIcon from 'icons/send.svg';
 
 const NAVIGATION_ITEM_REPORT = 'Zgłaszany wynik';
 const NAVIGATION_ITEM_DETAILS = 'Szczegóły';
 const NAVIGATION_ITEM_REVIEW = 'Recenzja';
 
-interface Props extends IResult, IReport {}
+interface Props {
+  report: IReport;
+}
 
 const navigationItems = [
   {
@@ -94,6 +96,10 @@ const StyledDetailsButtons = styled(StyledButtons)`
   margin: 35px 0;
 `;
 
+const StyledButtonMargin = styled.div`
+  margin-right: 15px;
+`;
+
 const StatementDataWrapper = styled.div`
   margin-bottom: 15px;
 `;
@@ -111,15 +117,7 @@ const categories: DropdownItem[] = [
   },
 ];
 
-export const EditorReport: React.FC<Props> = ({
-  statement,
-  verdict,
-  probability,
-  category,
-  date,
-  politician,
-  reporter,
-}) => {
+export const EditorReport: React.FC<Props> = ({ report }) => {
   const [
     navigationSelectedItem,
     setNavigationSelectedItem,
@@ -136,11 +134,17 @@ export const EditorReport: React.FC<Props> = ({
     },
   });
 
+  const history = useHistory();
+
+  const navigateToReportsList = () => {
+    history.push(Routes.editorReports);
+  };
+
   const reportedResult = (
     <>
       <StyledHeader>Podejrzana wypowiedź</StyledHeader>
       <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
-        {statement}
+        {report.result.statement}
       </StyledTextDisplay>
       <HeaderRow>
         <h2>Ocena wypowiedzi przez model</h2>
@@ -152,14 +156,19 @@ export const EditorReport: React.FC<Props> = ({
       </HeaderRow>
       <StyledStamentEvaluation>
         <StatementEvaluation
-          probability={probability}
-          verdict={verdict}
+          probability={report.result.probability}
+          verdict={report.result.verdict}
         ></StatementEvaluation>
       </StyledStamentEvaluation>
       <StyledButtons>
         <StyledButtonMargin>
           <ButtonWrapper>
-            <Button title="Anuluj" icon={cancelIcon} isFullWidth={true} />
+            <Button
+              title="Anuluj"
+              icon={cancelIcon}
+              isFullWidth={true}
+              onClick={navigateToReportsList}
+            />
           </ButtonWrapper>
         </StyledButtonMargin>
         <ButtonWrapper>
@@ -168,6 +177,9 @@ export const EditorReport: React.FC<Props> = ({
             title="Dalej"
             icon={arrowRightIcon}
             isFullWidth={true}
+            onClick={() => {
+              setNavigationSelectedItem(navigationItems[1]);
+            }}
           />
         </ButtonWrapper>
       </StyledButtons>
@@ -177,30 +189,38 @@ export const EditorReport: React.FC<Props> = ({
   const details = (
     <>
       <StyledHeader>Formularz zgłoszenia</StyledHeader>
-      <StatementData category="E-mail" content={reporter} icon={mailIcon} />
+      <StatementData
+        category="E-mail"
+        content={report.reporter}
+        icon={mailIcon}
+      />
       <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
-        {statement}
+        {report.result.statement}
       </StyledTextDisplay>
       <StyledHeader>Dodatkowe informacje</StyledHeader>
-      {politician && (
+      {report.politician && (
         <StatementDataWrapper>
           <StatementData
             category="Polityk"
-            content={politician}
+            content={report.politician}
             icon={userIcon}
           />
         </StatementDataWrapper>
       )}
-      {date && (
+      {report.date && (
         <StatementDataWrapper>
-          <StatementData category="Data" content={date} icon={calendarIcon} />
+          <StatementData
+            category="Data"
+            content={report.date}
+            icon={calendarIcon}
+          />
         </StatementDataWrapper>
       )}
-      {category && (
+      {report.category && (
         <StatementDataWrapper>
           <StatementData
             category="Kategoria"
-            content={category}
+            content={report.category}
             icon={financeIcon}
           />
         </StatementDataWrapper>
@@ -208,21 +228,36 @@ export const EditorReport: React.FC<Props> = ({
       <StyledDetailsButtons>
         <StyledButtonMargin>
           <ButtonWrapper>
-            <Button title="Anuluj" icon={cancelIcon} isFullWidth={true} />
+            <Button
+              title="Anuluj"
+              icon={cancelIcon}
+              isFullWidth={true}
+              onClick={navigateToReportsList}
+            />
           </ButtonWrapper>
         </StyledButtonMargin>
         <StyledButtonMargin>
           <ButtonWrapper>
             <Button
-              type="submit"
-              title="Dalej"
-              icon={arrowRightIcon}
+              title="Wstecz"
+              icon={arrowLeftIcon}
               isFullWidth={true}
+              onClick={() => {
+                setNavigationSelectedItem(navigationItems[0]);
+              }}
             />
           </ButtonWrapper>
         </StyledButtonMargin>
         <ButtonWrapper>
-          <Button title="Wstecz" icon={arrowLeftIcon} isFullWidth={true} />
+          <Button
+            type="submit"
+            title="Dalej"
+            icon={arrowRightIcon}
+            isFullWidth={true}
+            onClick={() => {
+              setNavigationSelectedItem(navigationItems[2]);
+            }}
+          />
         </ButtonWrapper>
       </StyledDetailsButtons>
     </>
@@ -249,21 +284,33 @@ export const EditorReport: React.FC<Props> = ({
       <StyledDetailsButtons>
         <StyledButtonMargin>
           <ButtonWrapper>
-            <Button title="Anuluj" icon={cancelIcon} isFullWidth={true} />
+            <Button
+              title="Anuluj"
+              icon={cancelIcon}
+              isFullWidth={true}
+              onClick={navigateToReportsList}
+            />
           </ButtonWrapper>
         </StyledButtonMargin>
         <StyledButtonMargin>
           <ButtonWrapper>
             <Button
-              type="submit"
-              title="Dalej"
-              icon={arrowRightIcon}
+              title="Wstecz"
+              icon={arrowLeftIcon}
               isFullWidth={true}
+              onClick={() => {
+                setNavigationSelectedItem(navigationItems[1]);
+              }}
             />
           </ButtonWrapper>
         </StyledButtonMargin>
         <ButtonWrapper>
-          <Button title="Wstecz" icon={arrowLeftIcon} isFullWidth={true} />
+          <Button
+            type="submit"
+            title="Wyślij"
+            icon={sendIcon}
+            isFullWidth={true}
+          />
         </ButtonWrapper>
       </StyledDetailsButtons>
     </form>

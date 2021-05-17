@@ -25,7 +25,7 @@ const testReportData: IReport = {
   comment: 'Zaraz mi odpadnie łapa',
   date: '29.12.2020',
   politician: 'Mateusz Morawiecki',
-  reporter: 'Boris Bierezowski',
+  reporter: 'jan.doewski@a.pl',
   result: testResultData,
 };
 
@@ -35,7 +35,7 @@ const Root: React.FC = () => {
       <BrowserRouter>
         <Switch>
           <Route path={routes.editorReport} exact>
-            <EditorReport {...testResultData} {...testReportData} />
+            <EditorReport report={testReportData} />
           </Route>
           <Route path={routes.editorReports} exact>
             <EditorReports />
