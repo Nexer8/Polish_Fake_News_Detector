@@ -1,15 +1,8 @@
 # Instruction
 
-Following command installs the necessary package to communicate with *Clarin-PL* tools. It has to be installed prior to
-both development and running the server.
-
-```bash
-pip install -i https://pypi.clarin-pl.eu lpmn_client
-````
-
 ### Warning
 
-This library will not run successfully on Windows.
+This lpmn_client library provided by *Clarin-PL* will not run successfully on Windows.
 
 ## Server
 
