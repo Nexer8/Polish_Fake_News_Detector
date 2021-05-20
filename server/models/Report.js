@@ -21,6 +21,10 @@ const reportSchema = new Schema({
   category: String,
 });
 
+resultSchema.virtual("url").get(function () {
+  return "/editor/report/" + this._id;
+});
+
 const Report = mongoose.model("Report", reportSchema);
 
 module.exports = Report;
