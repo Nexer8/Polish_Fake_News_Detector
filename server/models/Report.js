@@ -2,17 +2,10 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const reportSchema = new Schema({
-  statement: {
-    type: String,
-    required: [true, CANNOT_BE_EMPTY_MSG],
-  },
-  verdict: {
-    type: String,
-    required: [true, CANNOT_BE_EMPTY_MSG],
-  },
-  probability: {
-    type: Number,
-    required: [true, CANNOT_BE_EMPTY_MSG],
+  result: {
+    type: Schema.Types.ObjectId,
+    ref: "Result",
+    required: true,
   },
   reporter: {
     type: String,
