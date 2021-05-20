@@ -18,6 +18,10 @@ const resultSchema = new Schema({
   },
 });
 
+resultSchema.virtual("url").get(function () {
+  return "/result/" + this._id;
+});
+
 const Result = mongoose.model("Result", resultSchema);
 
 module.exports = Result;
