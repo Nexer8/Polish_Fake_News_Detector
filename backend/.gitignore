@@ -1,0 +1,7 @@
+../.idea
+venv
+data
+*.zip
+*.tmp
+*/__pycache__
+__pycache__/

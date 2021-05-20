@@ -1,7 +1,8 @@
 from models.boosting_classifier import tuning_model_metaparameters
 import pandas as pd
 import numpy as np
-from feature_creation.features import load_split_sets, create_features, create_selected_features, create_selected_features_for_single_text
+from feature_creation.features import load_split_sets, create_features, create_selected_features, \
+    create_selected_features_for_single_text
 from features_test.chi2test import chi2test
 import models.random_forest as rf
 from keras.models import load_model
@@ -12,7 +13,6 @@ from models.rnn import evaluate_rnn_model_params, fit_rnn_model
 from models.rnn import predict_single_instance as rnn_predict_single_instance
 from models.mlp import evaluate_mlp_model_params, fit_mlp_model
 
-
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
@@ -22,7 +22,6 @@ df = pd.read_csv('data/citations.csv')
 df = df.dropna()
 df = df.reset_index(drop=True)
 
-classes_names = {0: 'Fałsz', 1: 'Prawda', 2: "Manipulacja", 3: "Nieweryfikowalne"}
 df['label'].replace({'Fałsz': 0, 'Prawda': 1, 'Manipulacja': 2, 'Nieweryfikowalne': 3}, inplace=True)
 df = df[(df['label'] == 0) | (df['label'] == 1)]
 
@@ -41,6 +40,12 @@ X_tfidf_feat = X_tfidf_feat.drop(X_tfidf_feat.columns[0], axis=1)
 # Current model: {'max_depth': 2, 'max_features': 'auto', 'min_samples_split': 6, 'n_estimators': 10}
 # mean_score_time=0.017376, mean_test_score=0.720370
 # rf.evaluate_best_params(X_tfidf_feat, df['label'])
+# Create
+# rf_model = rf.fit_model(X_tfidf_feat, df['label'])
+# Save
+# rf.save(rf_model, 'models/rf_model.pickle')
+# Load
+rf_model = rf.load_model('models/rf_model.pickle')
 
 # Gradient boosting with grid search for it, uncoment ONLY when dataset changes much
 # tuning_model_metaparameters(X_tfidf_feat, df['label'])
@@ -68,7 +73,6 @@ rnn_model = load_model('models/rnn_model.h5')
 # Load
 mlp_model = load_model('models/mlp_model.h5')
 
-
 # Examples of single instances predicitons
 # for numb in range(100, 120):
 #     print('Treść wypowiedzi:')
@@ -79,11 +83,12 @@ mlp_model = load_model('models/mlp_model.h5')
 #     print('================================================')
 
 # Example of creating selected features for single text and prediction
-# text = "Pod względem przeliczenia na PKB Polska jest na pierwszym miejscu w Unii Europejskiej, jeżeli chodzi o skalę pomocy dla przedsiębiorców."# Fałsz
+# text = "Pod względem przeliczenia na PKB Polska jest na pierwszym miejscu w Unii Europejskiej, jeżeli chodzi o skalę pomocy dla przedsiębiorców."  # Fałsz
 # selected_featrures_for_single_text = create_selected_features_for_single_text(text)
 # print('Treść wypowiedzi:')
 # print(text)
 # print('Klasyfikacja: 0')
 # prediction = models.rnn.predict_single_instance(rnn_model, selected_featrures_for_single_text)
-# # prediction = models.mlp.predict_single_instance(mlp_model, selected_featrures_for_single_text)
+# prediction = models.mlp.predict_single_instance(mlp_model, selected_featrures_for_single_text)
+# prediction = rf.predict_single_instance(rf_model, selected_featrures_for_single_text)
 # print('Predykcja: ', prediction)

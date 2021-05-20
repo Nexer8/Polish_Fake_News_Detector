@@ -13,10 +13,10 @@ from keras.utils import plot_model
 
 
 def create_model(optimizer='SGD', loss='categorical_crossentropy'):
-
     model = Sequential()
     model.add(Embedding(1000, 32))
-    model.add(LSTM(64, dropout=0.3, recurrent_dropout=0.3, recurrent_initializer='glorot_uniform', return_sequences=True))
+    model.add(
+        LSTM(64, dropout=0.3, recurrent_dropout=0.3, recurrent_initializer='glorot_uniform', return_sequences=True))
     model.add(LSTM(32, dropout=0.3, recurrent_dropout=0.3, recurrent_initializer='glorot_uniform'))
     model.add(Dense(256, activation='relu'))
     model.add(Dense(64, activation='relu'))
@@ -24,8 +24,8 @@ def create_model(optimizer='SGD', loss='categorical_crossentropy'):
     model.summary()
 
     model.compile(optimizer=optimizer,
-                loss=loss,
-                metrics=['accuracy'])
+                  loss=loss,
+                  metrics=['accuracy'])
 
     model.summary()
 
@@ -37,15 +37,16 @@ def fit_rnn_model(X_tfidf_feat, labels, optimizer='adam', loss='categorical_cros
     X_train, X_test, y_train, y_test = train_test_split(X_tfidf_feat, labels, test_size=0.2, stratify=labels)
     y_train_cat = to_categorical(y_train, 2)
     y_test_cat = to_categorical(y_test, 2)
-    history = model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), batch_size=batch_size, epochs=epochs)
+    history = model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), batch_size=batch_size,
+                        epochs=epochs)
 
     model.summary()
-    plot_model(model, to_file='rnn_model.png', show_shapes=True,show_layer_names=True)
+    plot_model(model, to_file='rnn_model.png', show_shapes=True, show_layer_names=True)
 
     return model
 
-def evaluate_rnn_model_params(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
 
+def evaluate_rnn_model_params(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
     model = KerasClassifier(build_fn=create_model)
 
     param_grid = {
@@ -55,7 +56,8 @@ def evaluate_rnn_model_params(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
         'loss': ['mse', 'categorical_crossentropy']
     }
 
-    grid = GridSearchCV(estimator=model, param_grid=param_grid, cv=StratifiedKFold(n_splits=5, random_state=1410, shuffle=True),
+    grid = GridSearchCV(estimator=model, param_grid=param_grid,
+                        cv=StratifiedKFold(n_splits=5, random_state=1410, shuffle=True),
                         n_jobs=-1, return_train_score=True)
     grid_result = grid.fit(X_tfidf_feat, labels)
 
@@ -65,5 +67,4 @@ def evaluate_rnn_model_params(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
 def predict_single_instance(model, instance):
     prediction = model.predict(np.array([instance]))
 
-    # return [round(prc, 4) for prc in prediction[0]]
-    return prediction[0]
+    return [float(prc) for prc in prediction[0]]

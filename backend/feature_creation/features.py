@@ -167,9 +167,11 @@ def load_split_sets():
 
 
 def create_selected_features():
-    selected_features = pd.read_csv('data/tfidf_all_features.csv', usecols=['punctuation%','length','sentiment','positive_words%'])
+    selected_features = pd.read_csv('data/tfidf_all_features.csv',
+                                    usecols=['punctuation%', 'length', 'sentiment', 'positive_words%'])
     df = pd.DataFrame(selected_features)
     df.to_csv('data/tfidf_selected_features.csv')
+
 
 def create_selected_features_for_single_text(text: str) -> pd.DataFrame:
     d = {
@@ -177,7 +179,7 @@ def create_selected_features_for_single_text(text: str) -> pd.DataFrame:
         'length': [count_text_length(text)],
         'sentiment': [get_sentiment(text)],
         'positive_words%': [count_positive_words()]
-        }
+    }
     selected_features = pd.DataFrame(d).iloc[0]
 
     return selected_features

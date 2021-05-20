@@ -2,20 +2,20 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.ensemble import GradientBoostingClassifier
 import pandas as pd
 
-def create_boosting_model(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
 
+def create_boosting_model(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
     gbc = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.7,
-        max_depth=100, max_features='auto', min_samples_leaf=1, min_samples_split=4,
-        random_state=0).fit(X_tfidf_feat, labels)
+                                     max_depth=100, max_features='auto', min_samples_leaf=1, min_samples_split=4,
+                                     random_state=0).fit(X_tfidf_feat, labels)
     print("result of gtb:")
     print(gbc.score(X_tfidf_feat, labels))
 
-
     return gbc
+
 
 def tuning_model_metaparameters(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
     gbc = GradientBoostingClassifier(random_state=0).fit(X_tfidf_feat, labels)
-    
+
     param_grid = {
         'max_depth': [1, 5, 10, 50, 100],
         'learning_rate': [0.1, 0.3, 0.5, 0.7, 1.0],
