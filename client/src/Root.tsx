@@ -12,6 +12,8 @@ import { VerdictType } from 'components/StatementEvaluation';
 import { IResult } from 'models/Result';
 import { IReport } from 'models/Report';
 
+import * as temp from './temp';
+
 const testResultData: IResult = {
   statement: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
   verdict: VerdictType.TRUTH,
@@ -38,13 +40,13 @@ const Root: React.FC = () => {
             <EditorReport report={testReportData} />
           </Route>
           <Route path={routes.editorReports} exact>
-            <EditorReports />
+            <EditorReports reports={temp.REPORTS} />
           </Route>
           <Route path={routes.editorLogin} exact>
             <EditorLogin />
           </Route>
           <Route path={routes.result} exact>
-            <Result />
+            <Result result={testResultData} />
           </Route>
           <Route path={routes.resultReport} exact>
             <ResultReport />

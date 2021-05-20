@@ -13,10 +13,10 @@ const Template: Story<Props> = (args) => <ResultsFilterInfo {...args} />;
 
 export const NoFilter = Template.bind({});
 NoFilter.args = {
-  content: 'Wyświetlane są wszystkie zgłoszenia',
+  hasFiltersApplied: false,
 };
 
 export const Filter = Template.bind({});
 Filter.args = {
-  content: 'Wyświetlane są przefiltrowane zgłoszenia',
+  hasFiltersApplied: true,
 };
