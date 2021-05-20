@@ -74,5 +74,6 @@ def evaluate_mlp_model_params(X_tfidf_feat: pd.DataFrame, labels: pd.DataFrame):
 def predict_single_instance(model, instance):
     prediction = model.predict(np.array([instance]))
 
-    return [round(prc, 4) for prc in prediction[0]]
+    # return [round(prc, 4) for prc in prediction[0]]
+    return prediction[0]
 
