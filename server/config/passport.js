@@ -5,21 +5,27 @@ const JWTStrategy = require("passport-jwt").Strategy;
 const Editor = require("../models/Editor");
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      // const user = await User.findOne({ username });
-      // if (!user) {
-      //   return done(null, false, { message: "Invalid credentials." });
-      // }
-      // const correctPassword = user.verifyPassword(password);
-      // if (!correctPassword) {
-      //   return done(null, false, { message: "Invalid credentials." });
-      // }
-      // done(null, user);
-    } catch (error) {
-      done(error, false);
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+    async (email, password, done) => {
+      try {
+        const editor = await Editor.findOne({ email });
+        if (!editor) {
+          return done(null, false, { message: "Invalid credentials." });
+        }
+        const correctPassword = editor.verifyPassword(password);
+        if (!correctPassword) {
+          return done(null, false, { message: "Invalid credentials." });
+        }
+        done(null, editor);
+      } catch (error) {
+        done(error, false);
+      }
     }
-  })
+  )
 );
 
 const tokenHandler = (req) => {
@@ -27,7 +33,7 @@ const tokenHandler = (req) => {
     return null;
   }
 
-  return req.cookies["fnc_access_token"];
+  return req.cookies["fn_access_token"];
 };
 
 passport.use(
@@ -39,12 +45,12 @@ passport.use(
     },
     async (req, payload, done) => {
       try {
-        // const user = await User.findById(payload.userId);
-        // if (!user) {
-        //   return done(null, false);
-        // }
-        // req.user = user;
-        // done(null, user);
+        const editor = await Editor.findById(payload.editorId);
+        if (!editor) {
+          return done(null, false);
+        }
+        req.editor = editor;
+        done(null, editor);
       } catch (error) {
         done(error, false);
       }
