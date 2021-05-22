@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Editor = require("../models/Editor");
+const Report = require("../models/Report");
+const Result = require("../models/Result");
 
 module.exports = {
   register: async (req, res, next) => {
@@ -32,12 +34,20 @@ module.exports = {
   },
 
   getReport: async (req, res, next) => {
-    const { resultId } = req.value.params;
+    const { reportId } = req.value.params;
 
-    res.status(200).json();
+    const report = await Report.findById(reportId).populate("result");
+
+    if (!report) {
+      res.status(404).json({ message: "Report not found" });
+    } else {
+      res.status(200).json(report);
+    }
   },
 
   getReports: async (req, res, next) => {
-    res.status(200).json();
+    const reports = await Report.find({}).populate("result");
+
+    res.status(200).json(reports);
   },
 };
