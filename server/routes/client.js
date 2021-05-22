@@ -1,9 +1,5 @@
 const express = require("express");
 const router = require("express-promise-router")();
-const passport = require("passport");
-const passportConfig = require("../config/passport");
-
-const passportJWT = passport.authenticate("jwt", { session: false });
 
 const ClientController = require("../controllers/client");
 const {
@@ -11,8 +7,6 @@ const {
   validatePathParam,
   schemas,
 } = require("../helpers/routeHelpers");
-
-const passportLocal = passport.authenticate("local", { session: false });
 
 router
   .route("/verify")

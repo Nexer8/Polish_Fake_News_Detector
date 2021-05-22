@@ -56,7 +56,10 @@ module.exports = {
   schemas: {
     // TODO: adjust schemas based on routes
     idSchema: {},
-    loginBodySchema: {},
+    editorBodySchema: Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+    }),
     reviewBodySchema: {},
     verifyStatementBodySchema: {},
     reportBodySchema: {},
