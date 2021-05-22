@@ -8,8 +8,8 @@ model = rf.load_model('models/rf_model.pickle')
 app = FastAPI()
 
 
-@app.get("/classify/{text_body}")
-async def classify_test(text_body: str):
+@app.post("/classify/")
+async def classify_text(text_body: str):
     features = create_selected_features_for_single_text(text_body)
     prediction = rf.predict_single_instance(model, features)
     return dict(zip(['fake', 'true'], prediction))
