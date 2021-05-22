@@ -21,6 +21,7 @@ const reportSchema = new Schema({
   politician: String,
   date: Date,
   category: String,
+  resolved: Boolean,
 });
 
 reportSchema.virtual("url").get(function () {

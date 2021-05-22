@@ -64,7 +64,13 @@ module.exports = {
       email: Joi.string().email().required(),
       password: Joi.string().required(),
     }),
-    reviewBodySchema: {},
+    reviewBodySchema: Joi.object({
+      reportId: Joi.string()
+        .regex(/^[0-9a-fA-F]{24}$/)
+        .required(),
+      comment: Joi.string().required(),
+      verdict: Joi.string().required(),
+    }),
     verifyStatementBodySchema: {},
     reportBodySchema: {},
   },
