@@ -55,7 +55,11 @@ module.exports = {
 
   schemas: {
     // TODO: adjust schemas based on routes
-    idSchema: {},
+    idParamSchema: Joi.object({
+      param: Joi.string()
+        .regex(/^[0-9a-fA-F]{24}$/)
+        .required(),
+    }),
     editorBodySchema: Joi.object({
       email: Joi.string().email().required(),
       password: Joi.string().required(),

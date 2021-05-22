@@ -34,9 +34,9 @@ router
   );
 
 router
-  .route("/report/:resultId")
+  .route("/report/:reportId")
   .get(
-    validatePathParam(schemas.idSchema, "resultId"),
+    validatePathParam(schemas.idParamSchema, "reportId"),
     passportJWT,
     EditorController.getReport
   );
