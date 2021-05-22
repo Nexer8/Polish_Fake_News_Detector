@@ -90,8 +90,56 @@ module.exports = {
   },
 
   getReports: async (req, res, next) => {
+    const { category, dateFrom, dateTo, politician } = req.query;
+
     const reports = await Report.find({}).populate("result");
 
-    res.status(200).json(reports);
+    let filteredReports = reports.filter((report) => !report.resolved);
+
+    if (category) {
+      filteredReports = filteredReports.filter((report) =>
+        report.category.toUpperCase().includes(category.toUpperCase())
+      );
+    }
+
+    if (dateFrom) {
+      const filterDate = new Date(dateFrom);
+      filterDate.setHours(0, 0, 0, 0);
+
+      filteredReports = filteredReports.filter((report) => {
+        if (!report.date) {
+          return false;
+        }
+
+        const reportDate = new Date(report.date);
+        reportDate.setHours(0, 0, 0, 0);
+
+        return reportDate.getTime() >= filterDate.getTime();
+      });
+    }
+
+    if (dateTo) {
+      const filterDate = new Date(dateTo);
+      filterDate.setHours(0, 0, 0, 0);
+
+      filteredReports = filteredReports.filter((report) => {
+        if (!report.date) {
+          return false;
+        }
+
+        const reportDate = new Date(report.date);
+        reportDate.setHours(0, 0, 0, 0);
+
+        return reportDate.getTime() <= filterDate.getTime();
+      });
+    }
+
+    if (politician) {
+      filteredReports = filteredReports.filter((report) =>
+        report.politician.toUpperCase().includes(politician.toUpperCase())
+      );
+    }
+
+    res.status(200).json(filteredReports);
   },
 };

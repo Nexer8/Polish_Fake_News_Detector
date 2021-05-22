@@ -41,7 +41,6 @@ router
     EditorController.getReport
   );
 
-// TODO: validateQueryParam
 router.route("/reports").get(passportJWT, EditorController.getReports);
 
 module.exports = router;
