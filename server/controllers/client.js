@@ -24,19 +24,18 @@ module.exports = {
       });
       const fakeProbability = result.data.fake;
       const trueProbability = result.data.true;
-      let payload = {};
-      if (fakeProbability > trueProbability) {
-        payload = {
-          verdict: "fake",
-          probability: fakeProbability,
-        };
-      } else {
-        payload = {
-          verdict: "true",
-          probability: trueProbability,
-        };
-      }
-      res.status(200).json(payload);
+      const verdict = trueProbability > fakeProbability ? "true" : false;
+      const probability =
+        trueProbability > fakeProbability ? trueProbability : fakeProbability;
+
+      const resultObject = await new Result({
+        statement: statement,
+        verdict: verdict,
+        probability: probability,
+      });
+      await resultObject.save();
+
+      res.status(200).json(resultObject);
     } catch (err) {
       res.status(500).json({ error: { message: "ML model eror occured" } });
     }
@@ -58,12 +57,13 @@ module.exports = {
           result: result,
           category: category,
           comment: comment,
-          date: date,
+          date: Date.parse(date),
           politician: politician,
           reporter: reporter,
+          resolved: false,
         });
         await report.save();
-        res.status(200);
+        res.status(200).json(report);
       } catch (err) {
         res
           .status(500)

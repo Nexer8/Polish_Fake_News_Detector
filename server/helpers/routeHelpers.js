@@ -74,12 +74,12 @@ module.exports = {
     verifyStatementBodySchema: Joi.object({
       statement: Joi.string().required(),
     }),
-    reportBodySchema: {
+    reportBodySchema: Joi.object({
       category: Joi.string().required(),
       comment: Joi.string().required(),
       date: Joi.string().required(),
       politician: Joi.string().required(),
       reporter: Joi.string().email().required(),
-    },
+    }),
   },
 };
