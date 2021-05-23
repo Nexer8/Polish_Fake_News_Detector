@@ -18,8 +18,8 @@ To run the server execute:
 python server.py
 ```
 
-By default, it will run the server under http://127.0.0.1:8000. The only endpoint implements the *GET* method and is
-available under */classify/{text_body}*.
+By default, it will run the server under http://127.0.0.1:8000. The only endpoint implements the *POST* method and is
+available under */classify/*. The text that needs to be classified should be passed in the request's body.
 
 There is also a possibility to run *Swagger* under */docs*.
 
