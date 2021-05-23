@@ -75,10 +75,10 @@ module.exports = {
       statement: Joi.string().required(),
     }),
     reportBodySchema: Joi.object({
-      category: Joi.string().required(),
+      category: Joi.string(),
       comment: Joi.string().required(),
-      date: Joi.string().required(),
-      politician: Joi.string().required(),
+      date: Joi.string(),
+      politician: Joi.string(),
       reporter: Joi.string().email().required(),
     }),
   },

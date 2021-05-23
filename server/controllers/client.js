@@ -28,10 +28,10 @@ module.exports = {
       const probability =
         trueProbability > fakeProbability ? trueProbability : fakeProbability;
 
-      const resultObject = await new Result({
-        statement: statement,
-        verdict: verdict,
-        probability: probability,
+      const resultObject = new Result({
+        statement,
+        verdict,
+        probability,
       });
       await resultObject.save();
 
