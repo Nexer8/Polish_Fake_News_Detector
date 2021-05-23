@@ -71,7 +71,15 @@ module.exports = {
       comment: Joi.string().required(),
       verdict: Joi.string().required(),
     }),
-    verifyStatementBodySchema: {},
-    reportBodySchema: {},
+    verifyStatementBodySchema: Joi.object({
+      statement: Joi.string().required(),
+    }),
+    reportBodySchema: {
+      category: Joi.string().required(),
+      comment: Joi.string().required(),
+      date: Joi.string().required(),
+      politician: Joi.string().required(),
+      reporter: Joi.string().email().required(),
+    },
   },
 };
