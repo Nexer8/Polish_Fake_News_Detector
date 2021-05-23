@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const CANNOT_BE_EMPTY_MSG = "can't be blank.";
+
 const reportSchema = new Schema({
   result: {
     type: Schema.Types.ObjectId,
@@ -19,9 +21,10 @@ const reportSchema = new Schema({
   politician: String,
   date: Date,
   category: String,
+  resolved: Boolean,
 });
 
-resultSchema.virtual("url").get(function () {
+reportSchema.virtual("url").get(function () {
   return "/editor/report/" + this._id;
 });
 

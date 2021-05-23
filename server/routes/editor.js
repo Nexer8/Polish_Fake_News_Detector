@@ -34,14 +34,13 @@ router
   );
 
 router
-  .route("/report/:resultId")
+  .route("/report/:reportId")
   .get(
-    validatePathParam(schemas.idSchema, "resultId"),
+    validatePathParam(schemas.idParamSchema, "reportId"),
     passportJWT,
     EditorController.getReport
   );
 
-// TODO: validateQueryParam
 router.route("/reports").get(passportJWT, EditorController.getReports);
 
 module.exports = router;

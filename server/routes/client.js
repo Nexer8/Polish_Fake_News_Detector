@@ -20,7 +20,7 @@ router
   .post(
     [
       validateBody(schemas.reportBodySchema),
-      validatePathParam(schemas.idSchema, "resultId"),
+      validatePathParam(schemas.idParamSchema, "resultId"),
     ],
     ClientController.report
   );
@@ -28,7 +28,7 @@ router
 router
   .route("/result/:resultId")
   .get(
-    validatePathParam(schemas.idSchema, "resultId"),
+    validatePathParam(schemas.idParamSchema, "resultId"),
     ClientController.getResult
   );
 
