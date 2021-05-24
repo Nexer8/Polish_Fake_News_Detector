@@ -2,21 +2,8 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from 'state/store';
 import axios from 'axios';
 
-// export enum Status {
-//   IDLE = 'idle',
-//   LOADING = 'loading',
-//   SUCCEEDED = 'succeeded',
-//   FAILED = 'succeeded',
-// }
-
-interface Respone {
-  statement: string;
-  verdict: boolean;
-  probability: number;
-}
-
 export interface ClientState {
-  status: 'idle' | 'loading' | 'failed';
+  status: 'idle' | 'loading' | 'failed' | 'success';
   statement: string;
   verdict: boolean;
   probability: number;
@@ -53,8 +40,8 @@ export const clientSlice = createSlice({
   name: 'client',
   initialState,
   reducers: {
-    statementVerified(state, action: PayloadAction<string>) {
-      state.statement = action.payload;
+    statementRedirected(state, action: PayloadAction<string>) {
+      state.status = 'idle';
     },
   },
   extraReducers: (builder) => {
@@ -63,16 +50,18 @@ export const clientSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(verifyStatement.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'success';
         state.statement = action.payload.statement;
         state.verdict = action.payload.verdict;
         state.probability = action.payload.probability;
-        state.id = action.payload.id;
+        state.id = action.payload._id;
       });
   },
 });
 
 // SELECTORS
-// TODO: write selectors
+export const selectStatus = (state: RootState) => state.client.status;
+export const selectId = (state: RootState) => state.client.id;
 
+export const { statementRedirected } = clientSlice.actions;
 export default clientSlice.reducer;

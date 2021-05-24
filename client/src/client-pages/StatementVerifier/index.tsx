@@ -1,14 +1,21 @@
 import { Button } from 'components/Button';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { MainTemplate } from 'templates/MainTemplate';
 import { headers } from 'headers';
 import clipboardIcon from 'icons/clipboard.svg';
 import { Textarea } from 'components/Textarea';
 import { CharacterCounter } from './CharacterCounter';
-import { useAppDispatch } from 'state/hooks';
-import { verifyStatement } from 'state/slices/clientSlice';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import {
+  verifyStatement,
+  selectStatus,
+  selectId,
+  statementRedirected,
+} from 'state/slices/clientSlice';
+import Routes from 'routes';
 
 const HEADING: string = 'Sprawdź wypowiedź';
 const MAX_CHARACTERS_VALUE: number = 1000;
@@ -51,10 +58,20 @@ export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
   const dispatch = useAppDispatch();
+  const status = useAppSelector(selectStatus);
+  const id = useAppSelector(selectId);
+  const { push } = useHistory();
 
   useEffect(() => {
     value.length > MAX_CHARACTERS_VALUE ? setValid(false) : setValid(true);
   }, [value]);
+
+  useEffect(() => {
+    if (status === 'success') {
+      push(Routes.result.replace(':id', id));
+      dispatch(statementRedirected('idle'));
+    }
+  }, [status, id, push, dispatch]);
 
   const handlePasteClick = () => {
     navigator.clipboard.readText().then((text) => setValue(text));
