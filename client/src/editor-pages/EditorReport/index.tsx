@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import { Navigation, NavigationItem } from 'components/Navigation';
-import { StatementEvaluation } from 'components/StatementEvaluation';
+import {
+  StatementEvaluation,
+  VerdictType,
+} from 'components/StatementEvaluation';
 import { headers } from 'headers';
 import { ReturnButton } from 'components/ReturnButton';
 import { TextDisplay } from 'components/TextDisplay';
 import { Button } from 'components/Button';
-import { useHistory } from 'react-router-dom';
-import { IReport } from 'models/Report';
+import { useHistory, useParams } from 'react-router-dom';
 import { Icon } from 'components/Icon';
 import { StatementData } from 'components/StatementData';
 import { Select, DropdownItem } from 'components/Select';
 import { Textarea } from 'components/Textarea';
-import { COMMENT_FIELD, CATEGORY_FIELD } from 'client-pages/ResultReport';
 import { useFormik } from 'formik';
 import Routes from 'routes';
 import eyeIcon from 'icons/eye.svg';
@@ -29,14 +30,20 @@ import calendarIcon from 'icons/calendar.svg';
 import userIcon from 'icons/user.svg';
 import financeIcon from 'icons/finance.svg';
 import sendIcon from 'icons/send.svg';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import {
+  selectCurrentReport,
+  fetchReportAsync,
+  reviewAsync,
+} from 'state/slices/editorSlice';
 
 const NAVIGATION_ITEM_REPORT = 'Zgłaszany wynik';
 const NAVIGATION_ITEM_DETAILS = 'Szczegóły';
 const NAVIGATION_ITEM_REVIEW = 'Recenzja';
+const VERDICT_FIELD = 'verdict';
+const COMMENT_FIELD = 'comment';
 
-interface Props {
-  report: IReport;
-}
+interface Props {}
 
 const navigationItems = [
   {
@@ -108,29 +115,49 @@ const StyledTextarea = styled(Textarea)`
   margin-top: 15px;
 `;
 
-const categories: DropdownItem[] = [
+const verdicts: DropdownItem[] = [
   {
-    name: 'Lorem',
+    name: VerdictType.TRUTH,
+    isGreen: true,
   },
   {
-    name: 'Ipsum',
+    name: VerdictType.FAKE,
+    isRed: true,
   },
 ];
 
-export const EditorReport: React.FC<Props> = ({ report }) => {
+export const EditorReport: React.FC<Props> = () => {
+  const dispatch = useAppDispatch();
+  const report = useAppSelector(selectCurrentReport);
+
+  const { id: idParam } = useParams<{ id: string }>();
+
   const [
     navigationSelectedItem,
     setNavigationSelectedItem,
   ] = useState<NavigationItem>(navigationItems[0]);
 
+  useEffect(() => {
+    if (report?.id !== idParam) {
+      dispatch(fetchReportAsync(idParam));
+    }
+  }, [dispatch, report?.id, idParam]);
+
   const formik = useFormik({
     initialValues: {
-      [COMMENT_FIELD]: '',
-      [CATEGORY_FIELD]: (null as unknown) as DropdownItem,
+      comment: '',
+      verdict: verdicts[0],
     },
     onSubmit: (values) => {
-      // TODO: handle submit
-      alert(JSON.stringify(values, null, 2));
+      if (report) {
+        dispatch(
+          reviewAsync({
+            reportId: report.id,
+            comment: values.comment,
+            verdict: values.verdict.name as VerdictType,
+          }),
+        );
+      }
     },
   });
 
@@ -140,7 +167,7 @@ export const EditorReport: React.FC<Props> = ({ report }) => {
     history.push(Routes.editorReports);
   };
 
-  const reportedResult = (
+  const reportedResult = report && (
     <>
       <StyledHeader>Podejrzana wypowiedź</StyledHeader>
       <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
@@ -186,7 +213,7 @@ export const EditorReport: React.FC<Props> = ({ report }) => {
     </>
   );
 
-  const details = (
+  const details = report && (
     <>
       <StyledHeader>Formularz zgłoszenia</StyledHeader>
       <StatementData
@@ -267,11 +294,11 @@ export const EditorReport: React.FC<Props> = ({ report }) => {
     <form onSubmit={formik.handleSubmit}>
       <StyledHeader>Recenzja edytorska</StyledHeader>
       <Select
-        items={categories}
-        selectedItem={formik.values[CATEGORY_FIELD] as DropdownItem}
+        items={verdicts}
+        selectedItem={formik.values.verdict}
         placeholder="Wybierz ocenę wypowiedzi"
         onSelect={(item: DropdownItem) =>
-          formik.setFieldValue(CATEGORY_FIELD, item)
+          formik.setFieldValue(VERDICT_FIELD, item)
         }
       />
       <StyledTextarea
@@ -279,7 +306,7 @@ export const EditorReport: React.FC<Props> = ({ report }) => {
         name={COMMENT_FIELD}
         onChange={formik.handleChange}
         placeholder="Wprowadź komentarz dotyczący zgłoszenia."
-        value={formik.values[COMMENT_FIELD].toString()}
+        value={formik.values.comment}
       />
       <StyledDetailsButtons>
         <StyledButtonMargin>
