@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { MainTemplate } from 'templates/MainTemplate';
+import { Spinner } from 'components/Spinner';
 import { headers } from 'headers';
 import clipboardIcon from 'icons/clipboard.svg';
 import { Textarea } from 'components/Textarea';
@@ -54,9 +55,12 @@ const StyledFooter = styled.div`
   justify-content: space-between;
 `;
 
+const StyledSpinner = styled(Spinner)``;
+
 export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
+  const [showSpinner, setShowSpinner] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const status = useAppSelector(selectStatus);
   const id = useAppSelector(selectId);
@@ -67,9 +71,15 @@ export const StatementVerifier: React.FC<Props> = () => {
   }, [value]);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (status === 'loading') {
+      setShowSpinner(true);
+    } else if (status === 'success') {
+      // navigate to result page
       push(Routes.result.replace(':id', id));
+      // set status of thunk to idle
       dispatch(statementRedirected('idle'));
+      // hide spinner
+      setShowSpinner(false);
     }
   }, [status, id, push, dispatch]);
 
@@ -84,35 +94,39 @@ export const StatementVerifier: React.FC<Props> = () => {
 
   return (
     <MainTemplate headerItems={headers.client}>
-      <StyledWrapper>
-        <StyledHeader>
-          <h2>{HEADING}</h2>
-          <Button
-            title={PASTE_BUTTON_TITLE}
-            icon={clipboardIcon}
-            onClick={handlePasteClick}
-          />
-        </StyledHeader>
-        <StyledTextarea
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-          }}
-          placeholder={PLACEHOLDER_VALUE}
-        />
-        <StyledFooter>
-          <CharacterCounter
-            currentCount={value.length}
-            isValid={isValid}
-            maxCharacters={MAX_CHARACTERS_VALUE}
-          />
-          <Button
-            title={VERIFY_BUTTON_TITLE}
-            icon={clipboardIcon}
-            onClick={handleVerifyClick}
-          />
-        </StyledFooter>
-      </StyledWrapper>
+      {showSpinner ? (
+        <StyledSpinner />
+      ) : (
+        <StyledWrapper>
+          <StyledHeader>
+            <h2>{HEADING}</h2>
+            <Button
+              title={PASTE_BUTTON_TITLE}
+              icon={clipboardIcon}
+              onClick={handlePasteClick}
+            />
+          </StyledHeader>
+          <StyledTextarea
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+            }}
+            placeholder={PLACEHOLDER_VALUE}
+          ></StyledTextarea>
+          <StyledFooter>
+            <CharacterCounter
+              currentCount={value.length}
+              isValid={isValid}
+              maxCharacters={MAX_CHARACTERS_VALUE}
+            />
+            <Button
+              title={VERIFY_BUTTON_TITLE}
+              icon={clipboardIcon}
+              onClick={handleVerifyClick}
+            />
+          </StyledFooter>
+        </StyledWrapper>
+      )}
     </MainTemplate>
   );
 };
