@@ -44,24 +44,11 @@ export const fetchReportAsync = createAsyncThunk(
   async (reportId: string) => {
     const response = await fetchReportAPI(reportId);
 
-    const {
-      _id,
-      result,
-      reporter,
-      comment,
-      politician,
-      dateFrom,
-      dateTo,
-    } = response.data;
+    const { _id } = response.data;
 
     return {
       id: _id,
-      result,
-      reporter,
-      comment,
-      politician,
-      dateFrom,
-      dateTo,
+      ...response.data,
     };
   },
 );
@@ -83,26 +70,10 @@ export const fetchReportsAsync = createAsyncThunk(
 
     const reports = response.data;
 
-    return reports.map(
-      (report: {
-        _id: string;
-        result: Object;
-        reporter: string;
-        comment: string;
-        politician: string;
-        category: string;
-        date: string;
-      }) =>
-        ({
-          id: report._id,
-          result: report.result,
-          reporter: report.reporter,
-          comment: report.comment,
-          politician: report.politician,
-          category: report.category,
-          date: report.date,
-        } as IReport),
-    );
+    return reports.map((report: { _id: string }) => ({
+      id: report._id,
+      ...report,
+    }));
   },
 );
 
