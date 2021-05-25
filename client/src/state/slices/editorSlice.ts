@@ -1,29 +1,166 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from 'state/store';
+import { IReport } from 'models/Report';
+import {
+  fetchReportAPI,
+  fetchReportsAPI,
+  loginAPI,
+  reviewAPI,
+} from 'state/api/editorAPI';
+import { VerdictType } from 'components/StatementEvaluation';
 
 export interface EditorState {
-  // TODO: write interface
+  reports: IReport[];
+  currentReport: IReport | null;
+  status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: EditorState = {
-  // TODO: write initial state
+  reports: [],
+  currentReport: null,
+  status: 'idle',
 };
+
+export const loginAsync = createAsyncThunk(
+  'editor/login',
+  async (data: { email: string; password: string }) => {
+    const response = await loginAPI(data.email, data.password);
+
+    return response.data;
+  },
+);
+
+export const reviewAsync = createAsyncThunk(
+  'editor/review',
+  async (data: { reportId: string; comment: string; verdict: VerdictType }) => {
+    const response = await reviewAPI(data.reportId, data.comment, data.verdict);
+
+    return response.data;
+  },
+);
+
+export const fetchReportAsync = createAsyncThunk(
+  'editor/fetchReport',
+  async (reportId: string) => {
+    const response = await fetchReportAPI(reportId);
+
+    const {
+      _id,
+      result,
+      reporter,
+      comment,
+      politician,
+      dateFrom,
+      dateTo,
+    } = response.data;
+
+    return {
+      id: _id,
+      result,
+      reporter,
+      comment,
+      politician,
+      dateFrom,
+      dateTo,
+    };
+  },
+);
+
+export const fetchReportsAsync = createAsyncThunk(
+  'editor/fetchReports',
+  async (data: {
+    category: string;
+    politician: string;
+    dateFrom: string;
+    dateTo: string;
+  }) => {
+    const response = await fetchReportsAPI(
+      data.category,
+      data.politician,
+      data.dateFrom,
+      data.dateTo,
+    );
+
+    const reports = response.data;
+
+    return reports.map(
+      (report: {
+        _id: string;
+        result: Object;
+        reporter: string;
+        comment: string;
+        politician: string;
+        category: string;
+        date: string;
+      }) =>
+        ({
+          id: report._id,
+          result: report.result,
+          reporter: report.reporter,
+          comment: report.comment,
+          politician: report.politician,
+          category: report.category,
+          date: report.date,
+        } as IReport),
+    );
+  },
+);
 
 export const editorSlice = createSlice({
   name: 'editor',
   initialState,
   reducers: {
-    // TODO: write reducers
+    chooseReport: (state, action: PayloadAction<IReport>) => {
+      state.currentReport = action.payload;
+    },
   },
-  // TODO: write extraReducers for asyncs
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(loginAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        // state.reports = action.payload;
+        console.log('logged in');
+      });
+
+    builder
+      .addCase(reviewAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(reviewAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        // state.reports = action.payload;
+        console.log('reviewed');
+      });
+
+    builder
+      .addCase(fetchReportsAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchReportsAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.reports = action.payload;
+      });
+
+    builder
+      .addCase(fetchReportAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchReportAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.currentReport = action.payload;
+      });
+  },
 });
 
 // ACTIONS
-// TODO: assign actions
-
-// THUNKS
-// TODO: write async functions
+export const { chooseReport } = editorSlice.actions;
 
 // SELECTORS
-// TODO: write selectors
+export const selectReports = (state: RootState) => state.editor.reports;
+export const selectCurrentReport = (state: RootState) =>
+  state.editor.currentReport;
 
 export default editorSlice.reducer;
