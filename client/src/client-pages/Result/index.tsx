@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 
@@ -14,6 +14,8 @@ import { Share } from 'client-pages/StatementVerifier/Share';
 import reloadIcon from 'icons/reload.svg';
 import infoIcon from 'icons/info.svg';
 import flagIcon from 'icons/flag.svg';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { getResult, selectClient } from 'state/slices/clientSlice';
 
 export interface Props {
   result: IResult;
@@ -62,6 +64,13 @@ const StyledHeader = styled.h2`
 export const Result: React.FC<Props> = ({ result }) => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const client = useAppSelector(selectClient);
+
+  useEffect(() => {
+    dispatch(getResult(id));
+    console.log(id);
+  }, [id, dispatch]);
 
   return (
     <MainTemplate headerItems={headers.client}>
@@ -80,7 +89,7 @@ export const Result: React.FC<Props> = ({ result }) => {
           </ButtonWrapper>
         </HeaderRow>
         <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
-          {result.statement}
+          {client.statement}
         </StyledTextDisplay>
         <HeaderRow>
           <h2>Ocena wypowiedzi przez model</h2>
@@ -92,8 +101,8 @@ export const Result: React.FC<Props> = ({ result }) => {
         </HeaderRow>
         <StyledStamentEvaluation>
           <StatementEvaluation
-            probability={result.probability}
-            verdict={result.verdict}
+            probability={Math.round(client.probability * 100)}
+            verdict={client.verdict}
           ></StatementEvaluation>
         </StyledStamentEvaluation>
         <HeaderRow>
