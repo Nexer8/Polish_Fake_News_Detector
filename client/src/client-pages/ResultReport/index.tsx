@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import eyeIcon from 'icons/eye.svg';
@@ -22,6 +24,7 @@ import {
   StatementEvaluation,
   VerdictType,
 } from 'components/StatementEvaluation';
+import { Alert, AlertType } from 'components/Alerts/Alert';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -112,11 +115,23 @@ const StyledEvaluationWrapper = styled.div`
   margin: 30px 0;
 `;
 
+interface ShowAlert {
+  show: boolean;
+  type: AlertType;
+  message: string;
+}
+
 export const ResultReport: React.FC<Props> = () => {
   const [
     navigationSelectedItem,
     setNavigationSelectedItem,
   ] = useState<NavigationItem>(navigationItems[0]);
+  const [showAlert, setShowAlert] = useState<ShowAlert>({
+    show: false,
+    type: AlertType.SUCCESS,
+    message: '',
+  });
+  const { id } = useParams<{ id: string }>();
 
   const formik = useFormik({
     initialValues: {
@@ -126,9 +141,41 @@ export const ResultReport: React.FC<Props> = () => {
       [DATE_FIELD]: '',
       [CATEGORY_FIELD]: (null as unknown) as DropdownItem,
     },
-    onSubmit: (values) => {
-      // TODO: handle submit
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      const { email, comment, politician, date } = values;
+      try {
+        const response = await axios.post(
+          `http://127.0.0.1:3001/api/client/report/${id}`,
+          {
+            reporter: email,
+            comment,
+            politician,
+            date,
+            // TODO
+            category: 'Polityka',
+          },
+        );
+        if (response.status === 200) {
+          setShowAlert({
+            show: true,
+            type: AlertType.SUCCESS,
+            message: 'Formularz wysłany',
+          });
+        } else {
+          setShowAlert({
+            show: true,
+            type: AlertType.ERROR,
+            message: 'Wystąpił błąd podczas wysyłania',
+          });
+        }
+      } catch (err) {
+        // else nie łapie 500
+        setShowAlert({
+          show: true,
+          type: AlertType.ERROR,
+          message: 'Wystąpił błąd podczas wysyłania',
+        });
+      }
     },
   });
 
@@ -151,7 +198,14 @@ export const ResultReport: React.FC<Props> = () => {
     >
       <StyledWrapper>
         <ReturnButton text="Wróć do wyniku" path="TODO: provide path" />
-
+        {showAlert.show && (
+          <Alert
+            id="pocototutaj"
+            type={showAlert.type}
+            message={showAlert.message}
+            onCloseClick={() => {}}
+          />
+        )}
         {navigationSelectedItem.name === NAVIGATION_ITEM_FORM && (
           <form onSubmit={formik.handleSubmit}>
             <StyledHeading>Formularz zgłoszenia</StyledHeading>

@@ -55,16 +55,17 @@ module.exports = {
       try {
         const report = new Report({
           result: result,
-          category: category,
+          category: category ? category : "nie podano",
           comment: comment,
-          date: Date.parse(date),
-          politician: politician,
+          date: date ? Date.parse(date) : Date(0),
+          politician: politician ? politician : "nieznany",
           reporter: reporter,
           resolved: false,
         });
         await report.save();
         res.status(200).json(report);
       } catch (err) {
+        console.log(err);
         res
           .status(500)
           .json({ error: { message: "Error occured when saving record" } });
