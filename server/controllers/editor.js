@@ -48,14 +48,14 @@ module.exports = {
       comment
     );
 
+    console.log(report.reporter);
+
     const data = {
       from: `Fake News Detection <fake-news-detection@${process.env.DOMAIN}>`,
       to: report.reporter,
       subject: `Odpowiedź na zgłoszenie #${reportId}!`,
       html,
     };
-
-    var success = false;
 
     await mailgun
       .messages()
@@ -64,17 +64,11 @@ module.exports = {
         report.resolved = true;
         report.save();
 
-        success = true;
+        res.status(200).json({ message: "E-mail sent" });
       })
       .catch((err) => {
-        console.log("Error while sending the email!", err);
+        res.status(500).json({ error: { message: err.message } });
       });
-
-    if (success) {
-      res.status(200).json({ message: "E-mail sent" });
-    } else {
-      res.status(500).json({ error: { message: "Sending the e-mail failed" } });
-    }
   },
 
   getReport: async (req, res, next) => {
