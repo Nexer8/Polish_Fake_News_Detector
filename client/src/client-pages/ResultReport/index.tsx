@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import eyeIcon from 'icons/eye.svg';
@@ -20,11 +20,11 @@ import { Textarea } from 'components/Textarea';
 import { DateInput } from 'components/DateInput';
 import { DropdownItem, Select } from 'components/Select';
 import { Button } from 'components/Button';
-import {
-  StatementEvaluation,
-  VerdictType,
-} from 'components/StatementEvaluation';
+import { StatementEvaluation } from 'components/StatementEvaluation';
 import { Alert, AlertType } from 'components/Alerts/Alert';
+import Routes from 'routes';
+import { useAppSelector } from 'state/hooks';
+import { selectClient } from 'state/slices/clientSlice';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -132,6 +132,8 @@ export const ResultReport: React.FC<Props> = () => {
     message: '',
   });
   const { id } = useParams<{ id: string }>();
+  const history = useHistory();
+  const client = useAppSelector(selectClient);
 
   const formik = useFormik({
     initialValues: {
@@ -151,7 +153,7 @@ export const ResultReport: React.FC<Props> = () => {
             comment,
             politician,
             date,
-            // TODO
+            // TODO: unhardcode
             category: 'Polityka',
           },
         );
@@ -180,7 +182,7 @@ export const ResultReport: React.FC<Props> = () => {
   });
 
   const handleCancel = () => {
-    // TODO: handle cancel click
+    history.push(Routes.statementVerifier);
   };
 
   return (
@@ -197,7 +199,10 @@ export const ResultReport: React.FC<Props> = () => {
       headerItems={headers.client}
     >
       <StyledWrapper>
-        <ReturnButton text="Wróć do wyniku" path="TODO: provide path" />
+        <ReturnButton
+          text="Wróć do wyniku"
+          path={Routes.result.replace(':id', id)}
+        />
         {showAlert.show && (
           <Alert
             id="pocototutaj"
@@ -268,13 +273,13 @@ export const ResultReport: React.FC<Props> = () => {
         {navigationSelectedItem.name === NAVIGATION_ITEM_PREVIEW && (
           <>
             <StyledHeading>Podejrzana wypowiedź</StyledHeading>
-            <StyledTextDisplay>TODO: Statement text</StyledTextDisplay>
+            <StyledTextDisplay>{client.statement}</StyledTextDisplay>
 
             <h2>Ocena wypowiedzi przez model</h2>
             <StyledEvaluationWrapper>
               <StatementEvaluation
-                probability={70}
-                verdict={VerdictType.FAKE}
+                probability={Math.round(client.probability * 100)}
+                verdict={client.verdict}
               />
             </StyledEvaluationWrapper>
           </>

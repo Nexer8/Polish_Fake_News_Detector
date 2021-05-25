@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 
 import routes from 'routes';
-import { IResult } from 'models/Result';
 import { MainTemplate } from 'templates/MainTemplate';
 import { headers } from 'headers';
 import { Button } from 'components/Button';
@@ -17,9 +16,7 @@ import flagIcon from 'icons/flag.svg';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getResult, selectClient } from 'state/slices/clientSlice';
 
-export interface Props {
-  result: IResult;
-}
+export interface Props {}
 
 const Container = styled.div`
   display: flex;
@@ -61,7 +58,7 @@ const StyledHeader = styled.h2`
   margin-bottom: 30px;
 `;
 
-export const Result: React.FC<Props> = ({ result }) => {
+export const Result: React.FC<Props> = () => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();

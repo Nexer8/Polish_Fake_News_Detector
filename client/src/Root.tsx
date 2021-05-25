@@ -46,7 +46,7 @@ const Root: React.FC = () => {
             <EditorLogin />
           </Route>
           <Route path={routes.result} exact>
-            <Result result={testResultData} />
+            <Result />
           </Route>
           <Route path={routes.resultReport} exact>
             <ResultReport />
