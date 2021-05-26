@@ -131,7 +131,12 @@ export const Filters: React.FC<Props> = ({
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(setFiltersBasedOnQueryParams, []);
+  useEffect(setFiltersBasedOnQueryParams, [
+    queryParams.category,
+    queryParams.politician,
+    queryParams.dateFrom,
+    queryParams.dateTo,
+  ]);
 
   return (
     <StyledWrapper>

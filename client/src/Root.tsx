@@ -80,7 +80,16 @@ const Root: React.FC = () => {
             </Route>
             <Route
               path={routes.wildcard}
-              render={() => <Redirect to={routes.editorReports} />}
+              render={() => (
+                <Redirect
+                  to={{
+                    pathname: routes.editorReports,
+                    search: new URLSearchParams(
+                      window.location.search,
+                    ).toString(),
+                  }}
+                />
+              )}
             />
           </Switch>
         ) : (
@@ -99,7 +108,16 @@ const Root: React.FC = () => {
             </Route>
             <Route
               path={routes.wildcard}
-              render={() => <Redirect to={routes.statementVerifier} />}
+              render={() => (
+                <Redirect
+                  to={{
+                    pathname: routes.statementVerifier,
+                    search: new URLSearchParams(
+                      window.location.search,
+                    ).toString(),
+                  }}
+                />
+              )}
             />
           </Switch>
         )}
