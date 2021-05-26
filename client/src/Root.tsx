@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import routes from 'routes';
+import { selectAlerts } from 'state/slices/alertSlice';
+import { useAppSelector } from 'state/hooks';
 import { EditorReports } from 'editor-pages/EditorReports';
 import { EditorReport } from 'editor-pages/EditorReport';
 import { EditorLogin } from 'editor-pages/EditorLogin';
@@ -10,6 +12,7 @@ import { ResultReport } from 'client-pages/ResultReport';
 import { StatementVerifier } from 'client-pages/StatementVerifier';
 import { VerdictType } from 'components/StatementEvaluation';
 import { IResult } from 'models/Result';
+import { Alerts } from 'components/Alerts';
 
 const testResultData: IResult = {
   statement: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
@@ -19,8 +22,10 @@ const testResultData: IResult = {
 };
 
 const Root: React.FC = () => {
+  const alerts = useAppSelector(selectAlerts);
   return (
     <>
+      <Alerts alerts={alerts} />
       <BrowserRouter>
         <Switch>
           <Route path={routes.editorReport} exact>
