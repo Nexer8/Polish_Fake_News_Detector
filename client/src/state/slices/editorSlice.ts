@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import * as _ from 'lodash';
 import { RootState } from 'state/store';
 import { IReport } from 'models/Report';
 import {
@@ -8,6 +9,7 @@ import {
   reviewAPI,
 } from 'state/api/editorAPI';
 import { VerdictType } from 'components/StatementEvaluation';
+import { AlertType, IAlert } from 'components/Alerts/Alert';
 
 export interface EditorState {
   reports: IReport[];
@@ -24,32 +26,75 @@ const initialState: EditorState = {
 export const loginAsync = createAsyncThunk(
   'editor/login',
   async (data: { email: string; password: string }) => {
-    const response = await loginAPI(data.email, data.password);
+    try {
+      await loginAPI(data.email, data.password);
 
-    return response.data;
+      return {
+        alert: {
+          id: _.uniqueId(),
+          message: 'Logged in!',
+        } as IAlert,
+      };
+    } catch (e) {
+      return {
+        alert: {
+          id: _.uniqueId(),
+          message: 'Wrong credentials!',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
   },
 );
 
 export const reviewAsync = createAsyncThunk(
   'editor/review',
   async (data: { reportId: string; comment: string; verdict: VerdictType }) => {
-    const response = await reviewAPI(data.reportId, data.comment, data.verdict);
+    try {
+      await reviewAPI(data.reportId, data.comment, data.verdict);
 
-    return response.data;
+      return {
+        alert: {
+          id: _.uniqueId(),
+          message: 'Review sent!',
+        } as IAlert,
+      };
+    } catch (e) {
+      return {
+        alert: {
+          id: _.uniqueId(),
+          message: 'Error while sending the review!',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
   },
 );
 
 export const fetchReportAsync = createAsyncThunk(
   'editor/fetchReport',
   async (reportId: string) => {
-    const response = await fetchReportAPI(reportId);
+    try {
+      const response = await fetchReportAPI(reportId);
 
-    const { _id } = response.data;
+      const { _id } = response.data;
 
-    return {
-      id: _id,
-      ...response.data,
-    };
+      return {
+        report: {
+          id: _id,
+          ...response.data,
+        },
+      };
+    } catch (e) {
+      return {
+        report: null,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Error while fetching the report!',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
   },
 );
 
@@ -61,19 +106,36 @@ export const fetchReportsAsync = createAsyncThunk(
     dateFrom: string;
     dateTo: string;
   }) => {
-    const response = await fetchReportsAPI(
-      data.category,
-      data.politician,
-      data.dateFrom,
-      data.dateTo,
-    );
+    try {
+      const response = await fetchReportsAPI(
+        data.category,
+        data.politician,
+        data.dateFrom,
+        data.dateTo,
+      );
 
-    const reports = response.data;
+      const reports = response.data;
 
-    return reports.map((report: { _id: string }) => ({
-      id: report._id,
-      ...report,
-    }));
+      return {
+        alert: {
+          id: _.uniqueId(),
+          message: 'Reports list updated.',
+        } as IAlert,
+        reports: reports.map((report: { _id: string }) => ({
+          id: report._id,
+          ...report,
+        })),
+      };
+    } catch (e) {
+      return {
+        reports: [],
+        alert: {
+          id: _.uniqueId(),
+          message: 'Error while fetching the reports!',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
   },
 );
 
@@ -90,19 +152,16 @@ export const editorSlice = createSlice({
       .addCase(loginAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(loginAsync.fulfilled, (state, action) => {
+      .addCase(loginAsync.fulfilled, (state) => {
         state.status = 'idle';
-        // state.reports = action.payload;
-        console.log('logged in');
       });
 
     builder
       .addCase(reviewAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(reviewAsync.fulfilled, (state, action) => {
+      .addCase(reviewAsync.fulfilled, (state) => {
         state.status = 'idle';
-        // state.reports = action.payload;
         console.log('reviewed');
       });
 
@@ -112,7 +171,7 @@ export const editorSlice = createSlice({
       })
       .addCase(fetchReportsAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.reports = action.payload;
+        state.reports = action.payload.reports;
       });
 
     builder
@@ -121,7 +180,7 @@ export const editorSlice = createSlice({
       })
       .addCase(fetchReportAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.currentReport = action.payload;
+        state.currentReport = action.payload.report;
       });
   },
 });
