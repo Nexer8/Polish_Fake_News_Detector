@@ -91,5 +91,7 @@ export const selectStatus = (state: RootState) => state.client.status;
 export const selectId = (state: RootState) => state.client.id;
 export const selectClient = (state: RootState) => state.client;
 
+// ACTIONS
 export const { statementRedirected } = clientSlice.actions;
+
 export default clientSlice.reducer;

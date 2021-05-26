@@ -65,9 +65,10 @@ export const Result: React.FC<Props> = () => {
   const client = useAppSelector(selectClient);
 
   useEffect(() => {
-    dispatch(getResult(id));
-    console.log(id);
-  }, [id, dispatch]);
+    if (client.id !== id) {
+      dispatch(getResult(id));
+    }
+  }, [id, client, dispatch]);
 
   return (
     <MainTemplate headerItems={headers.client}>

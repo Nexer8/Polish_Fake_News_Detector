@@ -141,10 +141,11 @@ export const ResultReport: React.FC<Props> = () => {
       [COMMENT_FIELD]: '',
       [POLITICIAN_FIELD]: '',
       [DATE_FIELD]: '',
-      [CATEGORY_FIELD]: (null as unknown) as DropdownItem,
+      category: categories[0],
     },
     onSubmit: async (values) => {
-      const { email, comment, politician, date } = values;
+      const { email, comment, politician, date, category } = values;
+
       try {
         const response = await axios.post(
           `http://127.0.0.1:3001/api/client/report/${id}`,
@@ -153,8 +154,7 @@ export const ResultReport: React.FC<Props> = () => {
             comment,
             politician,
             date,
-            // TODO: unhardcode
-            category: 'Polityka',
+            category: category.name,
           },
         );
         if (response.status === 200) {
