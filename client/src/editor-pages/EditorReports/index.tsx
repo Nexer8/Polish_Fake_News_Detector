@@ -42,6 +42,12 @@ const StyledReportWrapper = styled.div`
   margin-bottom: 50px;
 `;
 
+const StyledEmptyListInfo = styled.p`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.lightDark};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+`;
+
 export const EditorReports: React.FC<Props> = () => {
   const reports = useAppSelector(selectReports);
 
@@ -167,6 +173,9 @@ export const EditorReports: React.FC<Props> = () => {
             <Report report={report} onReviewClick={handleReviewClick} />
           </StyledReportWrapper>
         ))}
+        {reports.length === 0 && (
+          <StyledEmptyListInfo>Nie znaleziono wyników</StyledEmptyListInfo>
+        )}
       </StyledReportsWrapper>
     </SidebarTemplate>
   );
