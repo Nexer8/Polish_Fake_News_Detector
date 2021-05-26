@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
 import axios from 'axios';
@@ -23,8 +23,8 @@ import { Button } from 'components/Button';
 import { StatementEvaluation } from 'components/StatementEvaluation';
 import { Alert, AlertType } from 'components/Alerts/Alert';
 import Routes from 'routes';
-import { useAppSelector } from 'state/hooks';
-import { selectClient } from 'state/slices/clientSlice';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
+import { selectClient, getResult } from 'state/slices/clientSlice';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -36,9 +36,7 @@ export const CATEGORY_FIELD: string = 'category';
 const TEXT_DISPLAY_VALUE: string =
   'Wypowiedź wraz z wynikiem oraz uzupełnionymi danymi w formularzu zostanie przekazana do zespołu wykwalifikowanych edytorów. Po ręcznej weryfikacji, zostaniesz powiadomiony o rezultacie na podany adres e-mail. Prosimy, przekaż jak najwięcej informacji, które pomogą w weryfikacji treści sprawdzanej wypowiedzi. Diametralnie ułatwi to pracę naszemu zespołowi.';
 
-interface Props {
-  // TODO: define props here
-}
+interface Props {}
 
 const navigationItems = [
   {
@@ -51,22 +49,12 @@ const navigationItems = [
   },
 ];
 
-// TODO: provide valid categories (prossibly fetch from backend)
 const categories: DropdownItem[] = [
   {
-    name: 'Lorem',
+    name: 'Prawda',
   },
   {
-    name: 'Ipsum',
-  },
-  {
-    name: 'Dolor Sit',
-  },
-  {
-    name: 'Amet',
-  },
-  {
-    name: 'Ars bene moriendi',
+    name: 'Fałsz',
   },
 ];
 
@@ -103,7 +91,7 @@ const StyledDateInput = styled(DateInput)`
 const StyledButtons = styled.div`
   margin: 30px 0;
   display: flex;
-  position: absolute;
+  justify-content: flex-end;
   right: 0;
 `;
 
@@ -134,6 +122,13 @@ export const ResultReport: React.FC<Props> = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const client = useAppSelector(selectClient);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (client.id !== id) {
+      dispatch(getResult(id));
+    }
+  }, [id, client, dispatch]);
 
   const formik = useFormik({
     initialValues: {
