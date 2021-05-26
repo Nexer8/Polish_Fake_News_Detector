@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import * as _ from 'lodash';
+import _ from 'lodash';
+
+import Routes from 'routes';
 import { RootState } from 'state/store';
 import { IReport } from 'models/Report';
 import {
@@ -28,6 +30,8 @@ export const loginAsync = createAsyncThunk(
   async (data: { email: string; password: string }) => {
     try {
       await loginAPI(data.email, data.password);
+
+      window.location.href = Routes.editorReports;
 
       return {
         alert: {
@@ -192,5 +196,6 @@ export const { chooseReport } = editorSlice.actions;
 export const selectReports = (state: RootState) => state.editor.reports;
 export const selectCurrentReport = (state: RootState) =>
   state.editor.currentReport;
+export const selectEditorStatus = (state: RootState) => state.editor.status;
 
 export default editorSlice.reducer;
