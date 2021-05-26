@@ -35,3 +35,11 @@ export function fetchReportsAPI(
 
   return axios.get('/api/editor/reports', { params });
 }
+
+export function checkSessionAPI() {
+  return axios.get('/api/editor/session');
+}
+
+export function logoutAPI() {
+  return axios.post('/api/editor/logout');
+}

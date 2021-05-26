@@ -9,21 +9,64 @@ import {
   fetchReportsAPI,
   loginAPI,
   reviewAPI,
+  checkSessionAPI,
+  logoutAPI,
 } from 'state/api/editorAPI';
 import { VerdictType } from 'components/StatementEvaluation';
 import { AlertType, IAlert } from 'components/Alerts/Alert';
 
 export interface EditorState {
+  isLoggedIn: boolean;
   reports: IReport[];
   currentReport: IReport | null;
   status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: EditorState = {
+  isLoggedIn: false,
   reports: [],
   currentReport: null,
   status: 'idle',
 };
+
+export const checkSessionAsync = createAsyncThunk(
+  'editor/session',
+  async () => {
+    try {
+      await checkSessionAPI();
+
+      return {
+        success: true,
+      };
+    } catch (e) {
+      return {
+        success: false,
+      };
+    }
+  },
+);
+
+export const logoutAsync = createAsyncThunk('editor/logout', async () => {
+  try {
+    await logoutAPI();
+
+    return {
+      success: true,
+      alert: {
+        id: _.uniqueId(),
+        message: 'Logged out!',
+      } as IAlert,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      alert: {
+        id: _.uniqueId(),
+        message: 'Error while logging out!',
+      } as IAlert,
+    };
+  }
+});
 
 export const loginAsync = createAsyncThunk(
   'editor/login',
@@ -34,6 +77,7 @@ export const loginAsync = createAsyncThunk(
       window.location.href = Routes.editorReports;
 
       return {
+        success: true,
         alert: {
           id: _.uniqueId(),
           message: 'Logged in!',
@@ -41,6 +85,7 @@ export const loginAsync = createAsyncThunk(
       };
     } catch (e) {
       return {
+        success: false,
         alert: {
           id: _.uniqueId(),
           message: 'Wrong credentials!',
@@ -152,12 +197,34 @@ export const editorSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(checkSessionAsync.fulfilled, (state, action) => {
+      if (action.payload.success) {
+        state.isLoggedIn = true;
+      }
+    });
+
+    builder
+      .addCase(logoutAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(logoutAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+
+        if (action.payload.success) {
+          state.isLoggedIn = false;
+        }
+      });
+
     builder
       .addCase(loginAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(loginAsync.fulfilled, (state) => {
+      .addCase(loginAsync.fulfilled, (state, action) => {
         state.status = 'idle';
+
+        if (action.payload.success) {
+          state.isLoggedIn = true;
+        }
       });
 
     builder
@@ -197,5 +264,7 @@ export const selectReports = (state: RootState) => state.editor.reports;
 export const selectCurrentReport = (state: RootState) =>
   state.editor.currentReport;
 export const selectEditorStatus = (state: RootState) => state.editor.status;
+export const selectEditorLoggedIn = (state: RootState) =>
+  state.editor.isLoggedIn;
 
 export default editorSlice.reducer;
