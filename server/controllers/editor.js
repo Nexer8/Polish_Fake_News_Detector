@@ -60,8 +60,6 @@ module.exports = {
       comment
     );
 
-    console.log(report.reporter);
-
     const data = {
       from: `Fake News Detection <fake-news-detection@${process.env.DOMAIN}>`,
       to: report.reporter,

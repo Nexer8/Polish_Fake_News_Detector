@@ -233,7 +233,6 @@ export const editorSlice = createSlice({
       })
       .addCase(reviewAsync.fulfilled, (state) => {
         state.status = 'idle';
-        console.log('reviewed');
       });
 
     builder
