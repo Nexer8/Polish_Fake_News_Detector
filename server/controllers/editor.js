@@ -11,6 +11,12 @@ const Result = require("../models/Result");
 const { buildMailHtml } = require("../helpers/mailingHelpers");
 
 module.exports = {
+  checkSession: async (req, res, next) => {
+    if (req.editor) {
+      res.status(200).json({ success: true });
+    }
+  },
+
   register: async (req, res, next) => {
     const { email, password } = req.value.body;
 
@@ -32,6 +38,12 @@ module.exports = {
     res.cookie("fn_access_token", token, {
       httpOnly: true,
     });
+
+    res.status(200).json({ success: true });
+  },
+
+  logout: async (req, res, next) => {
+    res.clearCookie("fn_access_token");
 
     res.status(200).json({ success: true });
   },
