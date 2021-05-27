@@ -1,4 +1,6 @@
 import React from 'react';
+import { useAppDispatch } from 'state/hooks';
+import { removeAlert } from 'state/slices/alertSlice';
 import styled from 'styled-components';
 import { Alert, IAlert } from './Alert';
 
@@ -20,9 +22,10 @@ const StyledWrapper = styled.div`
 `;
 
 export const Alerts: React.FC<Props> = ({ alerts }) => {
-  const handleAlertClose = (id: String) => {
-    // TODO: store alerts either in context or redux
-    console.log(id);
+  const dispatch = useAppDispatch();
+
+  const handleAlertClose = (id: string) => {
+    dispatch(removeAlert(id));
   };
 
   return (

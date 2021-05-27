@@ -13,6 +13,8 @@ const {
 const passportJWT = passport.authenticate("jwt", { session: false });
 const passportLocal = passport.authenticate("local", { session: false });
 
+router.route("/session").get(passportJWT, EditorController.checkSession);
+
 router
   .route("/register")
   .post(validateBody(schemas.editorBodySchema), EditorController.register);
@@ -24,6 +26,8 @@ router
     passportLocal,
     EditorController.login
   );
+
+router.route("/logout").post(passportJWT, EditorController.logout);
 
 router
   .route("/review")

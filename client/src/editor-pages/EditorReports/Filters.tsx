@@ -19,10 +19,10 @@ export const DATE_TO_FIELD: string = 'dateTo';
 export const POLITICIAN_FIELD: string = 'politician';
 
 export type QueryParamsType = {
-  category?: string;
-  dateFrom?: string;
-  dateTo?: string;
-  politician?: string;
+  category: string;
+  dateFrom: string;
+  dateTo: string;
+  politician: string;
 };
 
 export type FiltersFormType = {
@@ -131,7 +131,12 @@ export const Filters: React.FC<Props> = ({
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(setFiltersBasedOnQueryParams, []);
+  useEffect(setFiltersBasedOnQueryParams, [
+    queryParams.category,
+    queryParams.politician,
+    queryParams.dateFrom,
+    queryParams.dateTo,
+  ]);
 
   return (
     <StyledWrapper>
