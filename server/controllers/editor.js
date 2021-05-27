@@ -11,6 +11,12 @@ const Result = require("../models/Result");
 const { buildMailHtml } = require("../helpers/mailingHelpers");
 
 module.exports = {
+  checkSession: async (req, res, next) => {
+    if (req.editor) {
+      res.status(200).json({ success: true });
+    }
+  },
+
   register: async (req, res, next) => {
     const { email, password } = req.value.body;
 
@@ -36,6 +42,12 @@ module.exports = {
     res.status(200).json({ success: true });
   },
 
+  logout: async (req, res, next) => {
+    res.clearCookie("fn_access_token");
+
+    res.status(200).json({ success: true });
+  },
+
   review: async (req, res, next) => {
     const { reportId, comment, verdict } = req.value.body;
 
@@ -55,8 +67,6 @@ module.exports = {
       html,
     };
 
-    var success = false;
-
     await mailgun
       .messages()
       .send(data)
@@ -64,17 +74,11 @@ module.exports = {
         report.resolved = true;
         report.save();
 
-        success = true;
+        res.status(200).json({ message: "E-mail sent" });
       })
       .catch((err) => {
-        console.log("Error while sending the email!", err);
+        res.status(500).json({ error: { message: err.message } });
       });
-
-    if (success) {
-      res.status(200).json({ message: "E-mail sent" });
-    } else {
-      res.status(500).json({ error: { message: "Sending the e-mail failed" } });
-    }
   },
 
   getReport: async (req, res, next) => {

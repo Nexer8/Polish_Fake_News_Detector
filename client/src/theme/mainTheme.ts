@@ -20,5 +20,8 @@ export const theme = {
     xl: '2.4rem',
     xxl: '3.6rem',
   },
+  zindex: {
+    alwaysVisible: 999,
+  },
   borderRadius: '4px',
 };

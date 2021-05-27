@@ -10,11 +10,12 @@ import flagActive from 'icons/flag.svg';
 import flagInactive from 'icons/flag-inactive.svg';
 import logoutActive from 'icons/logout-active.svg';
 import logoutInactive from 'icons/logout-inactive.svg';
+import Routes from 'routes';
 
 export const headers = {
   client: [
     {
-      path: '#',
+      path: Routes.statementVerifier,
       isActive: true,
       text: 'Sprawdź wypowiedź',
       iconActive: plusActive,
@@ -37,7 +38,7 @@ export const headers = {
   ],
   editor: [
     {
-      path: '#',
+      path: Routes.editorReports,
       isActive: true,
       text: 'Zgłoszenia',
       iconActive: flagActive,
@@ -53,7 +54,7 @@ export const headers = {
   ],
   login: [
     {
-      path: '#',
+      path: Routes.editorLogin,
       isActive: true,
       text: 'Logowanie',
       iconActive: keyActive,

@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import _ from 'lodash';
 
 import routes from 'routes';
-import useQueryParams from 'hooks/useQueryParams';
 import { headers } from 'headers';
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import { Report } from 'editor-pages/EditorReports/Report';
 import { ResultsFilterInfo } from 'components/ResultsFilterInfo';
-import { IReport } from 'models/Report';
 import {
   Filters,
   FiltersFormType,
@@ -19,10 +17,10 @@ import {
   POLITICIAN_FIELD,
   QueryParamsType,
 } from 'editor-pages/EditorReports/Filters';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { fetchReportsAsync, selectReports } from 'state/slices/editorSlice';
 
-interface Props {
-  reports: IReport[];
-}
+interface Props {}
 
 const StyledReportsWrapper = styled.div`
   position: relative;
@@ -44,24 +42,51 @@ const StyledReportWrapper = styled.div`
   margin-bottom: 50px;
 `;
 
-export const EditorReports: React.FC<Props> = ({ reports }) => {
+const StyledEmptyListInfo = styled.p`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.lightDark};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+`;
+
+export const EditorReports: React.FC<Props> = () => {
+  const reports = useAppSelector(selectReports);
+
+  const [filters, setFilters] = useState<QueryParamsType>({
+    category: '',
+    dateFrom: '',
+    dateTo: '',
+    politician: '',
+  });
+
   const history = useHistory();
-  const queryParams = useQueryParams();
+  const location = useLocation();
+
+  const dispatch = useAppDispatch();
 
   const handleFiltersChange = (values: FiltersFormType) => {
     const urlSearchParams = new URLSearchParams();
 
-    values.category?.name &&
-      urlSearchParams.append(CATEGORY_FIELD, values.category.name);
+    const category = values.category?.name ? values.category?.name : '';
+    const dateFrom = values.dateFrom ? values.dateFrom : '';
+    const dateTo = values.dateTo ? values.dateTo : '';
+    const politician = values.politician ? values.politician : '';
 
-    values.dateFrom && urlSearchParams.append(DATE_FROM_FIELD, values.dateFrom);
+    category && urlSearchParams.append(CATEGORY_FIELD, category);
 
-    values.dateTo && urlSearchParams.append(DATE_TO_FIELD, values.dateTo);
+    dateFrom && urlSearchParams.append(DATE_FROM_FIELD, dateFrom);
 
-    values.politician &&
-      urlSearchParams.append(POLITICIAN_FIELD, values.politician);
+    dateTo && urlSearchParams.append(DATE_TO_FIELD, dateTo);
+
+    politician && urlSearchParams.append(POLITICIAN_FIELD, politician);
 
     history.push({ search: urlSearchParams.toString() });
+
+    setFilters({
+      category,
+      dateFrom,
+      dateTo,
+      politician,
+    });
   };
 
   const handleFiltersReset = () => {
@@ -72,6 +97,46 @@ export const EditorReports: React.FC<Props> = ({ reports }) => {
     history.push(routes.editorReport.replace(':id', '') + id);
   };
 
+  useEffect(() => {
+    const { search } = location;
+    const queryParams = new URLSearchParams(search);
+
+    const category = queryParams.get(CATEGORY_FIELD);
+    const dateFrom = queryParams.get(DATE_FROM_FIELD);
+    const dateTo = queryParams.get(DATE_TO_FIELD);
+    const politician = queryParams.get(POLITICIAN_FIELD);
+
+    setFilters({
+      category: category ? category : '',
+      dateFrom: dateFrom ? dateFrom : '',
+      dateTo: dateTo ? dateTo : '',
+      politician: politician ? politician : '',
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
+  useEffect(() => {
+    const { category, dateFrom, dateTo, politician } = filters;
+
+    dispatch(
+      fetchReportsAsync({
+        category,
+        dateFrom,
+        dateTo,
+        politician,
+      }),
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    dispatch,
+    filters.category,
+    filters.dateFrom,
+    filters.dateTo,
+    filters.politician,
+  ]);
+
   return (
     <SidebarTemplate
       headerItems={headers.editor}
@@ -79,10 +144,10 @@ export const EditorReports: React.FC<Props> = ({ reports }) => {
         <Filters
           queryParams={
             {
-              category: queryParams.get(CATEGORY_FIELD),
-              dateFrom: queryParams.get(DATE_FROM_FIELD),
-              dateTo: queryParams.get(DATE_TO_FIELD),
-              politician: queryParams.get(POLITICIAN_FIELD),
+              category: filters.category,
+              dateFrom: filters.dateFrom,
+              dateTo: filters.dateTo,
+              politician: filters.politician,
             } as QueryParamsType
           }
           onApplyClick={handleFiltersChange}
@@ -95,10 +160,10 @@ export const EditorReports: React.FC<Props> = ({ reports }) => {
           <ResultsFilterInfo
             hasFiltersApplied={
               !!(
-                queryParams.get(CATEGORY_FIELD) ||
-                queryParams.get(DATE_FROM_FIELD) ||
-                queryParams.get(DATE_TO_FIELD) ||
-                queryParams.get(POLITICIAN_FIELD)
+                filters.category ||
+                filters.dateFrom ||
+                filters.dateTo ||
+                filters.politician
               )
             }
           />
@@ -108,6 +173,9 @@ export const EditorReports: React.FC<Props> = ({ reports }) => {
             <Report report={report} onReviewClick={handleReviewClick} />
           </StyledReportWrapper>
         ))}
+        {reports.length === 0 && (
+          <StyledEmptyListInfo>Nie znaleziono wyników</StyledEmptyListInfo>
+        )}
       </StyledReportsWrapper>
     </SidebarTemplate>
   );

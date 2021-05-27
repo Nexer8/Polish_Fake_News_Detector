@@ -11,6 +11,7 @@ export interface Props {
   iconActive: string;
   text: string;
   path: string;
+  onClick?: (text: string) => void;
 }
 
 const Container = styled.div<{
@@ -48,6 +49,7 @@ export const MenuItem: React.FC<Props> = ({
   iconActive,
   text,
   path,
+  onClick = () => {},
 }) => {
   const [icon, setIcon] = useState(isActive ? iconActive : iconInactive);
 
@@ -63,7 +65,7 @@ export const MenuItem: React.FC<Props> = ({
     >
       <Link to={path}>
         <Icon svg={icon} alt="navigation indicator" />
-        <span>{text}</span>
+        <span onClick={() => onClick(text)}>{text}</span>
       </Link>
     </Container>
   );

@@ -33,6 +33,8 @@ const StyledAlert = styled.div<{ type: AlertType }>`
   border-radius: ${({ theme }) => theme.borderRadius};
   margin-top: 20px;
   background-color: ${({ theme }) => theme.colors.green};
+  font-size: ${({ theme }) => theme.fontSize.s};
+  color: white;
 
   ${({ type }) =>
     type === AlertType.ERROR &&
