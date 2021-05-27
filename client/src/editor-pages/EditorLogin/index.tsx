@@ -10,6 +10,8 @@ import { Button } from 'components/Button';
 import mailIcon from 'icons/mail.svg';
 import keyIcon from 'icons/key-active.svg';
 import logoutIcon from 'icons/logout-active.svg';
+import { useAppDispatch } from 'state/hooks';
+import { loginAsync } from 'state/slices/editorSlice';
 
 const HEADING: string = 'Logowanie';
 const PASSWORD_FIELD: string = 'password';
@@ -39,14 +41,20 @@ const ButtonWrapper = styled.div`
 `;
 
 export const EditorLogin: React.FC<Props> = () => {
+  const dispatch = useAppDispatch();
+
   const formik = useFormik({
     initialValues: {
       [EMAIL_FIELD]: '',
       [PASSWORD_FIELD]: '',
     },
     onSubmit: (values) => {
-      // TODO: handle submit
-      alert(JSON.stringify(values, null, 2));
+      dispatch(
+        loginAsync({
+          email: values[EMAIL_FIELD],
+          password: values[PASSWORD_FIELD],
+        }),
+      );
     },
   });
 

@@ -5,6 +5,8 @@ import _uniqueId from 'lodash/uniqueId';
 import Routes from 'routes';
 import { MenuItem, Props as MenuItemProps } from 'components/Header/MenuItem';
 import logo from 'icons/logo.svg';
+import { useAppDispatch } from 'state/hooks';
+import { logoutAsync } from 'state/slices/editorSlice';
 
 export interface Props {
   items: MenuItemProps[];
@@ -25,6 +27,14 @@ const MenuItemWrapper = styled.div`
 `;
 
 export const Header: React.FC<Props> = ({ items }) => {
+  const dispatch = useAppDispatch();
+
+  const handleOnClick = (text: string) => {
+    if (text === 'Wyloguj') {
+      dispatch(logoutAsync());
+    }
+  };
+
   return (
     <Container>
       <MenuItem
@@ -44,6 +54,7 @@ export const Header: React.FC<Props> = ({ items }) => {
               text={item.text}
               iconActive={item.iconActive}
               iconInactive={item.iconInactive}
+              onClick={handleOnClick}
             />
           </MenuItemWrapper>
         ))}
