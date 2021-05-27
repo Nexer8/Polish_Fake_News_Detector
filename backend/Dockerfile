@@ -6,8 +6,8 @@ COPY server_requirements.txt server_requirements.txt
 
 RUN pip install -r server_requirements.txt
 
-COPY . .
-
 EXPOSE 8000
 
-CMD ["python", "server.py", "--host", "0.0.0.0"]
+COPY . .
+
+CMD ["python", "server.py"]
