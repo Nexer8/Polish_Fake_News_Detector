@@ -7,12 +7,11 @@ const reportSchema = new Schema({
   result: {
     type: Schema.Types.ObjectId,
     ref: "Result",
-    required: true,
+    required: [true, CANNOT_BE_EMPTY_MSG],
   },
   reporter: {
     type: String,
     lowercase: true,
-    unique: true,
     required: [true, CANNOT_BE_EMPTY_MSG],
     match: [/\S+@\S+\.\S+/, "is invalid."],
     index: true,

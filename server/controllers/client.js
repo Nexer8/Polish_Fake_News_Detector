@@ -18,29 +18,24 @@ module.exports = {
   verify: async (req, res, next) => {
     const { statement } = req.value.body;
 
-    try {
-      const result = await axios.post("http://127.0.0.1:8000/classify", {
-        statement: statement,
-      });
-      const fakeProbability = result.data.fake;
-      const trueProbability = result.data.true;
-      const verdict = trueProbability > fakeProbability ? "true" : false;
-      const probability =
-        trueProbability > fakeProbability ? trueProbability : fakeProbability;
+    const result = await axios.post("http://127.0.0.1:8000/classify", {
+      statement: statement,
+    });
+    const fakeProbability = result.data.fake;
+    const trueProbability = result.data.true;
+    const verdict = trueProbability > fakeProbability ? "Prawda" : "Fałsz";
+    let probability =
+      trueProbability > fakeProbability ? trueProbability : fakeProbability;
+    probability = Math.round(probability * 100);
 
-      const resultObject = new Result({
-        statement,
-        verdict,
-        probability,
-      });
-      await resultObject.save();
+    const resultObject = new Result({
+      statement,
+      verdict,
+      probability,
+    });
+    await resultObject.save();
 
-      res.status(200).json(resultObject);
-    } catch (err) {
-      res.status(500).json({ error: { message: "ML model eror occured" } });
-    }
-
-    res.status(200);
+    res.status(200).json(resultObject);
   },
 
   report: async (req, res, next) => {
@@ -49,27 +44,16 @@ module.exports = {
 
     const result = await Result.findById(resultId);
 
-    if (!result) {
-      res.status(404).json({ error: { message: "Result not found" } });
-    } else {
-      try {
-        const report = new Report({
-          result: result,
-          category: category ? category : "nie podano",
-          comment: comment,
-          date: date ? Date.parse(date) : Date(0),
-          politician: politician ? politician : "nieznany",
-          reporter: reporter,
-          resolved: false,
-        });
-        await report.save();
-        res.status(200).json(report);
-      } catch (err) {
-        console.log(err);
-        res
-          .status(500)
-          .json({ error: { message: "Error occured when saving record" } });
-      }
-    }
+    const report = new Report({
+      result: result,
+      category: category ? category : null,
+      comment: comment,
+      date: date ? Date.parse(date) : null,
+      politician: politician ? politician : null,
+      reporter: reporter,
+      resolved: false,
+    });
+    await report.save();
+    res.status(200).json(report);
   },
 };
