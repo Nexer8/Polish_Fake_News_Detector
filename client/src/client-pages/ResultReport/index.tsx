@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
+import _ from 'lodash';
+import * as Yup from 'yup';
 
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import eyeIcon from 'icons/eye.svg';
@@ -21,10 +23,11 @@ import { DateInput } from 'components/DateInput';
 import { DropdownItem, Select } from 'components/Select';
 import { Button } from 'components/Button';
 import { StatementEvaluation } from 'components/StatementEvaluation';
-import { Alert, AlertType } from 'components/Alerts/Alert';
+import { AlertType, IAlert } from 'components/Alerts/Alert';
 import Routes from 'routes';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { selectClient, getResult } from 'state/slices/clientSlice';
+import { selectResult, getResult } from 'state/slices/clientSlice';
+import { addAlert } from 'state/slices/alertSlice';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -36,6 +39,7 @@ export const CATEGORY_FIELD: string = 'category';
 const TEXT_DISPLAY_VALUE: string =
   'Wypowiedź wraz z wynikiem oraz uzupełnionymi danymi w formularzu zostanie przekazana do zespołu wykwalifikowanych edytorów. Po ręcznej weryfikacji, zostaniesz powiadomiony o rezultacie na podany adres e-mail. Prosimy, przekaż jak najwięcej informacji, które pomogą w weryfikacji treści sprawdzanej wypowiedzi. Diametralnie ułatwi to pracę naszemu zespołowi.';
 
+const REQUIRED_FIELD_MESSAGE = 'Pole wymagane';
 interface Props {}
 
 const navigationItems = [
@@ -51,10 +55,19 @@ const navigationItems = [
 
 const categories: DropdownItem[] = [
   {
-    name: 'Prawda',
+    name: 'Finanse',
   },
   {
-    name: 'Fałsz',
+    name: 'Polityka krajowa',
+  },
+  {
+    name: 'Polityka międzynarodowa',
+  },
+  {
+    name: 'Polityka społeczna',
+  },
+  {
+    name: 'Samorządy',
   },
 ];
 
@@ -103,32 +116,21 @@ const StyledEvaluationWrapper = styled.div`
   margin: 30px 0;
 `;
 
-interface ShowAlert {
-  show: boolean;
-  type: AlertType;
-  message: string;
-}
-
 export const ResultReport: React.FC<Props> = () => {
   const [
     navigationSelectedItem,
     setNavigationSelectedItem,
   ] = useState<NavigationItem>(navigationItems[0]);
-  const [showAlert, setShowAlert] = useState<ShowAlert>({
-    show: false,
-    type: AlertType.SUCCESS,
-    message: '',
-  });
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
-  const client = useAppSelector(selectClient);
+  const result = useAppSelector(selectResult);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (client.id !== id) {
+    if (result?.id !== id) {
       dispatch(getResult(id));
     }
-  }, [id, client, dispatch]);
+  }, [id, result?.id, dispatch]);
 
   const formik = useFormik({
     initialValues: {
@@ -138,40 +140,49 @@ export const ResultReport: React.FC<Props> = () => {
       [DATE_FIELD]: '',
       category: categories[0],
     },
+    validationSchema: Yup.object({
+      [COMMENT_FIELD]: Yup.string().required(REQUIRED_FIELD_MESSAGE),
+      [EMAIL_FIELD]: Yup.string()
+        .email('Nieprawidłowy adres email')
+        .required(REQUIRED_FIELD_MESSAGE),
+    }),
     onSubmit: async (values) => {
       const { email, comment, politician, date, category } = values;
 
       try {
-        const response = await axios.post(
-          `http://127.0.0.1:3001/api/client/report/${id}`,
-          {
-            reporter: email,
-            comment,
-            politician,
-            date,
-            category: category.name,
-          },
-        );
+        const response = await axios.post(`/api/client/report/${id}`, {
+          reporter: email,
+          comment,
+          politician,
+          date,
+          category: category.name,
+        });
         if (response.status === 200) {
-          setShowAlert({
-            show: true,
-            type: AlertType.SUCCESS,
-            message: 'Formularz wysłany',
-          });
+          dispatch(
+            addAlert({
+              id: _.uniqueId(),
+              message: 'Fomularz został wysłany',
+              type: AlertType.SUCCESS,
+            } as IAlert),
+          );
         } else {
-          setShowAlert({
-            show: true,
-            type: AlertType.ERROR,
-            message: 'Wystąpił błąd podczas wysyłania',
-          });
+          dispatch(
+            addAlert({
+              id: _.uniqueId(),
+              message: 'Nie udało się wysłać fomularza',
+              type: AlertType.ERROR,
+            } as IAlert),
+          );
         }
       } catch (err) {
         // else nie łapie 500
-        setShowAlert({
-          show: true,
-          type: AlertType.ERROR,
-          message: 'Wystąpił błąd podczas wysyłania',
-        });
+        dispatch(
+          addAlert({
+            id: _.uniqueId(),
+            message: 'Nie udało się wysłać fomularza',
+            type: AlertType.ERROR,
+          } as IAlert),
+        );
       }
     },
   });
@@ -198,14 +209,6 @@ export const ResultReport: React.FC<Props> = () => {
           text="Wróć do wyniku"
           path={Routes.result.replace(':id', id)}
         />
-        {showAlert.show && (
-          <Alert
-            id="pocototutaj"
-            type={showAlert.type}
-            message={showAlert.message}
-            onCloseClick={() => {}}
-          />
-        )}
         {navigationSelectedItem.name === NAVIGATION_ITEM_FORM && (
           <form onSubmit={formik.handleSubmit}>
             <StyledHeading>Formularz zgłoszenia</StyledHeading>
@@ -265,16 +268,16 @@ export const ResultReport: React.FC<Props> = () => {
           </form>
         )}
 
-        {navigationSelectedItem.name === NAVIGATION_ITEM_PREVIEW && (
+        {navigationSelectedItem.name === NAVIGATION_ITEM_PREVIEW && result && (
           <>
             <StyledHeading>Podejrzana wypowiedź</StyledHeading>
-            <StyledTextDisplay>{client.statement}</StyledTextDisplay>
+            <StyledTextDisplay>{result.statement}</StyledTextDisplay>
 
             <h2>Ocena wypowiedzi przez model</h2>
             <StyledEvaluationWrapper>
               <StatementEvaluation
-                probability={Math.round(client.probability * 100)}
-                verdict={client.verdict}
+                probability={result.probability}
+                verdict={result.verdict}
               />
             </StyledEvaluationWrapper>
           </>

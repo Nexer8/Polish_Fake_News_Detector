@@ -9,6 +9,7 @@ import {
   selectEditorLoggedIn,
   selectEditorStatus,
 } from 'state/slices/editorSlice';
+import { selectClientStatus } from 'state/slices/clientSlice';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { EditorReports } from 'editor-pages/EditorReports';
 import { EditorReport } from 'editor-pages/EditorReport';
@@ -42,6 +43,8 @@ const Root: React.FC = () => {
 
   const alerts = useAppSelector(selectAlerts);
   const editorStatus = useAppSelector(selectEditorStatus);
+  const clientStatus = useAppSelector(selectClientStatus);
+
   const isLoggedIn = useAppSelector(selectEditorLoggedIn);
 
   useEffect(() => {
@@ -49,8 +52,8 @@ const Root: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setLoading(editorStatus === 'loading');
-  }, [editorStatus]);
+    setLoading(editorStatus === 'loading' || clientStatus === 'loading');
+  }, [editorStatus, clientStatus]);
 
   return (
     <>

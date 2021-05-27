@@ -1,23 +1,20 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import _ from 'lodash';
 
 import { RootState } from 'state/store';
-import { VerdictType } from 'components/StatementEvaluation';
+import { AlertType, IAlert } from 'components/Alerts/Alert';
+import { IResult } from 'models/Result';
+import Routes from 'routes';
 
 export interface ClientState {
   status: 'idle' | 'loading' | 'failed' | 'success';
-  statement: string;
-  verdict: VerdictType;
-  probability: number;
-  id: string;
+  result: IResult | null;
 }
 
 const initialState: ClientState = {
   status: 'idle',
-  statement: '',
-  verdict: VerdictType.FAKE,
-  probability: 0,
-  id: '',
+  result: null,
 };
 
 // THUNKS
@@ -25,15 +22,26 @@ export const verifyStatement = createAsyncThunk(
   'client/verifyStatement',
   async (statement: string) => {
     try {
-      const response = await axios.post(
-        'http://127.0.0.1:3001/api/client/verify',
-        {
-          statement,
+      const response = await axios.post('/api/client/verify', {
+        statement,
+      });
+      const { _id } = response.data;
+      window.location.href = Routes.result.replace(':id', _id);
+      return {
+        result: {
+          id: _id,
+          ...response.data,
         },
-      );
-      return response.data;
+      };
     } catch (err) {
-      console.log(err);
+      return {
+        result: null,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Nie udało się zweryfikować wypowiedzi',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
     }
   },
 );
@@ -42,12 +50,24 @@ export const getResult = createAsyncThunk(
   'client/getResult',
   async (id: string) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:3001/api/client/result/${id}`,
-      );
-      return response.data;
+      const response = await axios.get(`/api/client/result/${id}`);
+      const { _id } = response.data;
+
+      return {
+        result: {
+          id: _id,
+          ...response.data,
+        },
+      };
     } catch (err) {
-      console.log(err);
+      return {
+        result: null,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Nie znaleziono wypowiedzi',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
     }
   },
 );
@@ -55,11 +75,7 @@ export const getResult = createAsyncThunk(
 export const clientSlice = createSlice({
   name: 'client',
   initialState,
-  reducers: {
-    statementRedirected(state, action: PayloadAction<string>) {
-      state.status = 'idle';
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(verifyStatement.pending, (state) => {
@@ -67,31 +83,18 @@ export const clientSlice = createSlice({
       })
       .addCase(verifyStatement.fulfilled, (state, action) => {
         state.status = 'success';
-        state.statement = action.payload.statement;
-        state.verdict =
-          action.payload.verdict === 'true'
-            ? VerdictType.TRUTH
-            : VerdictType.FAKE;
-        state.probability = action.payload.probability;
-        state.id = action.payload._id;
-      })
-      .addCase(getResult.fulfilled, (state, action) => {
-        state.statement = action.payload.statement;
-        state.verdict =
-          action.payload.verdict === 'true'
-            ? VerdictType.TRUTH
-            : VerdictType.FAKE;
-        state.probability = action.payload.probability;
+        state.result = action.payload.result;
       });
+
+    builder.addCase(getResult.fulfilled, (state, action) => {
+      state.result = action.payload.result;
+    });
   },
 });
 
 // SELECTORS
-export const selectStatus = (state: RootState) => state.client.status;
-export const selectId = (state: RootState) => state.client.id;
-export const selectClient = (state: RootState) => state.client;
-
-// ACTIONS
-export const { statementRedirected } = clientSlice.actions;
+export const selectClientStatus = (state: RootState) => state.client.status;
+export const selectId = (state: RootState) => state.client.result?.id;
+export const selectResult = (state: RootState) => state.client.result;
 
 export default clientSlice.reducer;

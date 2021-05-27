@@ -1,22 +1,14 @@
 import { Button } from 'components/Button';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 
 import { MainTemplate } from 'templates/MainTemplate';
-import { Spinner } from 'components/Spinner';
 import { headers } from 'headers';
 import clipboardIcon from 'icons/clipboard.svg';
 import { Textarea } from 'components/Textarea';
 import { CharacterCounter } from './CharacterCounter';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import {
-  verifyStatement,
-  selectStatus,
-  selectId,
-  statementRedirected,
-} from 'state/slices/clientSlice';
-import Routes from 'routes';
+import { useAppDispatch } from 'state/hooks';
+import { verifyStatement } from 'state/slices/clientSlice';
 
 const HEADING: string = 'Sprawdź wypowiedź';
 const MAX_CHARACTERS_VALUE: number = 1000;
@@ -25,9 +17,7 @@ const PLACEHOLDER_VALUE: string =
   'Wprowadź, bądź wklej treść wiadomości do zweryfikowania.';
 const VERIFY_BUTTON_TITLE: string = 'Zweryfikuj';
 
-interface Props {
-  // TODO: define props here
-}
+interface Props {}
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -55,33 +45,16 @@ const StyledFooter = styled.div`
   justify-content: space-between;
 `;
 
-const StyledSpinner = styled(Spinner)``;
-
 export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
-  const [showSpinner, setShowSpinner] = useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const status = useAppSelector(selectStatus);
-  const id = useAppSelector(selectId);
-  const { push } = useHistory();
 
   useEffect(() => {
-    value.length > MAX_CHARACTERS_VALUE ? setValid(false) : setValid(true);
+    value.length > MAX_CHARACTERS_VALUE || value.length === 0
+      ? setValid(false)
+      : setValid(true);
   }, [value]);
-
-  useEffect(() => {
-    if (status === 'loading') {
-      setShowSpinner(true);
-    } else if (status === 'success') {
-      // navigate to result page
-      push(Routes.result.replace(':id', id));
-      // set status of thunk to idle
-      dispatch(statementRedirected('idle'));
-      // hide spinner
-      setShowSpinner(false);
-    }
-  }, [status, id, push, dispatch]);
 
   const handlePasteClick = () => {
     navigator.clipboard.readText().then((text) => setValue(text));
@@ -94,39 +67,36 @@ export const StatementVerifier: React.FC<Props> = () => {
 
   return (
     <MainTemplate headerItems={headers.client}>
-      {showSpinner ? (
-        <StyledSpinner />
-      ) : (
-        <StyledWrapper>
-          <StyledHeader>
-            <h2>{HEADING}</h2>
-            <Button
-              title={PASTE_BUTTON_TITLE}
-              icon={clipboardIcon}
-              onClick={handlePasteClick}
-            />
-          </StyledHeader>
-          <StyledTextarea
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value);
-            }}
-            placeholder={PLACEHOLDER_VALUE}
-          ></StyledTextarea>
-          <StyledFooter>
-            <CharacterCounter
-              currentCount={value.length}
-              isValid={isValid}
-              maxCharacters={MAX_CHARACTERS_VALUE}
-            />
-            <Button
-              title={VERIFY_BUTTON_TITLE}
-              icon={clipboardIcon}
-              onClick={handleVerifyClick}
-            />
-          </StyledFooter>
-        </StyledWrapper>
-      )}
+      <StyledWrapper>
+        <StyledHeader>
+          <h2>{HEADING}</h2>
+          <Button
+            title={PASTE_BUTTON_TITLE}
+            icon={clipboardIcon}
+            onClick={handlePasteClick}
+          />
+        </StyledHeader>
+        <StyledTextarea
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+          }}
+          placeholder={PLACEHOLDER_VALUE}
+        ></StyledTextarea>
+        <StyledFooter>
+          <CharacterCounter
+            currentCount={value.length}
+            isValid={isValid}
+            maxCharacters={MAX_CHARACTERS_VALUE}
+          />
+          <Button
+            isDisabled={!isValid}
+            title={VERIFY_BUTTON_TITLE}
+            icon={clipboardIcon}
+            onClick={handleVerifyClick}
+          />
+        </StyledFooter>
+      </StyledWrapper>
     </MainTemplate>
   );
 };
