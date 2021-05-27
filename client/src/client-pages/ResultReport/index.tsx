@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
-import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
-import _ from 'lodash';
 import * as Yup from 'yup';
 
 import { SidebarTemplate } from 'templates/SidebarTemplate';
@@ -23,11 +21,10 @@ import { DateInput } from 'components/DateInput';
 import { DropdownItem, Select } from 'components/Select';
 import { Button } from 'components/Button';
 import { StatementEvaluation } from 'components/StatementEvaluation';
-import { AlertType, IAlert } from 'components/Alerts/Alert';
 import Routes from 'routes';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { selectResult, getResult } from 'state/slices/clientSlice';
-import { addAlert } from 'state/slices/alertSlice';
+import { selectResult, getResult, sendReport } from 'state/slices/clientSlice';
+import { IReport } from 'models/Report';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -147,43 +144,16 @@ export const ResultReport: React.FC<Props> = () => {
         .required(REQUIRED_FIELD_MESSAGE),
     }),
     onSubmit: async (values) => {
-      const { email, comment, politician, date, category } = values;
-
-      try {
-        const response = await axios.post(`/api/client/report/${id}`, {
-          reporter: email,
-          comment,
-          politician,
-          date,
-          category: category.name,
-        });
-        if (response.status === 200) {
-          dispatch(
-            addAlert({
-              id: _.uniqueId(),
-              message: 'Fomularz został wysłany',
-              type: AlertType.SUCCESS,
-            } as IAlert),
-          );
-        } else {
-          dispatch(
-            addAlert({
-              id: _.uniqueId(),
-              message: 'Nie udało się wysłać fomularza',
-              type: AlertType.ERROR,
-            } as IAlert),
-          );
-        }
-      } catch (err) {
-        // else nie łapie 500
-        dispatch(
-          addAlert({
-            id: _.uniqueId(),
-            message: 'Nie udało się wysłać fomularza',
-            type: AlertType.ERROR,
-          } as IAlert),
-        );
-      }
+      dispatch(
+        sendReport({
+          id: id,
+          reporter: values[EMAIL_FIELD],
+          comment: values[COMMENT_FIELD],
+          politician: values[POLITICIAN_FIELD],
+          date: values[DATE_FIELD],
+          category: values.category.name,
+        } as IReport),
+      );
     },
   });
 

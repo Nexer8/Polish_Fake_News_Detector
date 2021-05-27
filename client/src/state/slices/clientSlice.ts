@@ -5,10 +5,11 @@ import _ from 'lodash';
 import { RootState } from 'state/store';
 import { AlertType, IAlert } from 'components/Alerts/Alert';
 import { IResult } from 'models/Result';
+import { IReport } from 'models/Report';
 import Routes from 'routes';
 
 export interface ClientState {
-  status: 'idle' | 'loading' | 'failed' | 'success';
+  status: 'idle' | 'loading' | 'failed';
   result: IResult | null;
 }
 
@@ -72,6 +73,41 @@ export const getResult = createAsyncThunk(
   },
 );
 
+export const sendReport = createAsyncThunk(
+  'client/sendReport',
+  async (data: IReport) => {
+    const { reporter, comment, politician, date, category } = data;
+    try {
+      await axios.post(`/api/client/report/${data.id}`, {
+        reporter,
+        comment,
+        politician,
+        date,
+        category,
+      });
+
+      window.location.href = Routes.result.replace(':id', data.id);
+
+      return {
+        success: true,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Wysłano zgłoszenie!',
+        } as IAlert,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Wystąpił błąd przy wysyłaniu zgłoszenia!',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
+  },
+);
+
 export const clientSlice = createSlice({
   name: 'client',
   initialState,
@@ -82,13 +118,26 @@ export const clientSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(verifyStatement.fulfilled, (state, action) => {
-        state.status = 'success';
+        state.status = 'idle';
         state.result = action.payload.result;
       });
 
-    builder.addCase(getResult.fulfilled, (state, action) => {
-      state.result = action.payload.result;
-    });
+    builder
+      .addCase(getResult.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getResult.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.result = action.payload.result;
+      });
+
+    builder
+      .addCase(sendReport.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(sendReport.fulfilled, (state) => {
+        state.status = 'idle';
+      });
   },
 });
 

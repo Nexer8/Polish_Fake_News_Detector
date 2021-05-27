@@ -54,7 +54,7 @@ export const logoutAsync = createAsyncThunk('editor/logout', async () => {
       success: true,
       alert: {
         id: _.uniqueId(),
-        message: 'Logged out!',
+        message: 'Wylowany!',
       } as IAlert,
     };
   } catch (e) {
@@ -62,7 +62,7 @@ export const logoutAsync = createAsyncThunk('editor/logout', async () => {
       success: false,
       alert: {
         id: _.uniqueId(),
-        message: 'Error while logging out!',
+        message: 'Błąd przy wylogowaniu!',
       } as IAlert,
     };
   }
@@ -80,7 +80,7 @@ export const loginAsync = createAsyncThunk(
         success: true,
         alert: {
           id: _.uniqueId(),
-          message: 'Logged in!',
+          message: 'Zalogowano!',
         } as IAlert,
       };
     } catch (e) {
@@ -88,7 +88,7 @@ export const loginAsync = createAsyncThunk(
         success: false,
         alert: {
           id: _.uniqueId(),
-          message: 'Wrong credentials!',
+          message: 'Zły login lub hasło',
           type: AlertType.ERROR,
         } as IAlert,
       };
@@ -105,14 +105,14 @@ export const reviewAsync = createAsyncThunk(
       return {
         alert: {
           id: _.uniqueId(),
-          message: 'Review sent!',
+          message: 'Recenzja wysłana!',
         } as IAlert,
       };
     } catch (e) {
       return {
         alert: {
           id: _.uniqueId(),
-          message: 'Error while sending the review!',
+          message: 'Błąd przy wysyłaniu recenzji!',
           type: AlertType.ERROR,
         } as IAlert,
       };
@@ -139,7 +139,7 @@ export const fetchReportAsync = createAsyncThunk(
         report: null,
         alert: {
           id: _.uniqueId(),
-          message: 'Error while fetching the report!',
+          message: 'Błąd przy pobieraniu zgłoszenia!',
           type: AlertType.ERROR,
         } as IAlert,
       };
@@ -168,7 +168,7 @@ export const fetchReportsAsync = createAsyncThunk(
       return {
         alert: {
           id: _.uniqueId(),
-          message: 'Reports list updated.',
+          message: 'Lista zgłoszeń uaktualniona.',
         } as IAlert,
         reports: reports.map((report: { _id: string }) => ({
           id: report._id,
@@ -180,7 +180,7 @@ export const fetchReportsAsync = createAsyncThunk(
         reports: [],
         alert: {
           id: _.uniqueId(),
-          message: 'Error while fetching the reports!',
+          message: 'Błąd przy pobieraniu zgłoszeń!',
           type: AlertType.ERROR,
         } as IAlert,
       };
