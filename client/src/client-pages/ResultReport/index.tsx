@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
+import { useParams, useHistory } from 'react-router-dom';
+import * as Yup from 'yup';
 
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import eyeIcon from 'icons/eye.svg';
@@ -18,10 +20,11 @@ import { Textarea } from 'components/Textarea';
 import { DateInput } from 'components/DateInput';
 import { DropdownItem, Select } from 'components/Select';
 import { Button } from 'components/Button';
-import {
-  StatementEvaluation,
-  VerdictType,
-} from 'components/StatementEvaluation';
+import { StatementEvaluation } from 'components/StatementEvaluation';
+import Routes from 'routes';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
+import { selectResult, getResult, sendReport } from 'state/slices/clientSlice';
+import { IReport } from 'models/Report';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -33,9 +36,8 @@ export const CATEGORY_FIELD: string = 'category';
 const TEXT_DISPLAY_VALUE: string =
   'Wypowiedź wraz z wynikiem oraz uzupełnionymi danymi w formularzu zostanie przekazana do zespołu wykwalifikowanych edytorów. Po ręcznej weryfikacji, zostaniesz powiadomiony o rezultacie na podany adres e-mail. Prosimy, przekaż jak najwięcej informacji, które pomogą w weryfikacji treści sprawdzanej wypowiedzi. Diametralnie ułatwi to pracę naszemu zespołowi.';
 
-interface Props {
-  // TODO: define props here
-}
+const REQUIRED_FIELD_MESSAGE = 'Pole wymagane';
+interface Props {}
 
 const navigationItems = [
   {
@@ -48,22 +50,21 @@ const navigationItems = [
   },
 ];
 
-// TODO: provide valid categories (prossibly fetch from backend)
 const categories: DropdownItem[] = [
   {
-    name: 'Lorem',
+    name: 'Finanse',
   },
   {
-    name: 'Ipsum',
+    name: 'Polityka krajowa',
   },
   {
-    name: 'Dolor Sit',
+    name: 'Polityka międzynarodowa',
   },
   {
-    name: 'Amet',
+    name: 'Polityka społeczna',
   },
   {
-    name: 'Ars bene moriendi',
+    name: 'Samorządy',
   },
 ];
 
@@ -100,7 +101,7 @@ const StyledDateInput = styled(DateInput)`
 const StyledButtons = styled.div`
   margin: 30px 0;
   display: flex;
-  position: absolute;
+  justify-content: flex-end;
   right: 0;
 `;
 
@@ -117,6 +118,16 @@ export const ResultReport: React.FC<Props> = () => {
     navigationSelectedItem,
     setNavigationSelectedItem,
   ] = useState<NavigationItem>(navigationItems[0]);
+  const { id } = useParams<{ id: string }>();
+  const history = useHistory();
+  const result = useAppSelector(selectResult);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (result?.id !== id) {
+      dispatch(getResult(id));
+    }
+  }, [id, result?.id, dispatch]);
 
   const formik = useFormik({
     initialValues: {
@@ -124,16 +135,30 @@ export const ResultReport: React.FC<Props> = () => {
       [COMMENT_FIELD]: '',
       [POLITICIAN_FIELD]: '',
       [DATE_FIELD]: '',
-      [CATEGORY_FIELD]: (null as unknown) as DropdownItem,
+      category: categories[0],
     },
-    onSubmit: (values) => {
-      // TODO: handle submit
-      alert(JSON.stringify(values, null, 2));
+    validationSchema: Yup.object({
+      [COMMENT_FIELD]: Yup.string().required(REQUIRED_FIELD_MESSAGE),
+      [EMAIL_FIELD]: Yup.string()
+        .email('Nieprawidłowy adres email')
+        .required(REQUIRED_FIELD_MESSAGE),
+    }),
+    onSubmit: async (values) => {
+      dispatch(
+        sendReport({
+          id: id,
+          reporter: values[EMAIL_FIELD],
+          comment: values[COMMENT_FIELD],
+          politician: values[POLITICIAN_FIELD],
+          date: values[DATE_FIELD],
+          category: values.category.name,
+        } as IReport),
+      );
     },
   });
 
   const handleCancel = () => {
-    // TODO: handle cancel click
+    history.push(Routes.statementVerifier);
   };
 
   return (
@@ -150,8 +175,10 @@ export const ResultReport: React.FC<Props> = () => {
       headerItems={headers.client}
     >
       <StyledWrapper>
-        <ReturnButton text="Wróć do wyniku" path="TODO: provide path" />
-
+        <ReturnButton
+          text="Wróć do wyniku"
+          path={Routes.result.replace(':id', id)}
+        />
         {navigationSelectedItem.name === NAVIGATION_ITEM_FORM && (
           <form onSubmit={formik.handleSubmit}>
             <StyledHeading>Formularz zgłoszenia</StyledHeading>
@@ -211,16 +238,16 @@ export const ResultReport: React.FC<Props> = () => {
           </form>
         )}
 
-        {navigationSelectedItem.name === NAVIGATION_ITEM_PREVIEW && (
+        {navigationSelectedItem.name === NAVIGATION_ITEM_PREVIEW && result && (
           <>
             <StyledHeading>Podejrzana wypowiedź</StyledHeading>
-            <StyledTextDisplay>TODO: Statement text</StyledTextDisplay>
+            <StyledTextDisplay>{result.statement}</StyledTextDisplay>
 
             <h2>Ocena wypowiedzi przez model</h2>
             <StyledEvaluationWrapper>
               <StatementEvaluation
-                probability={70}
-                verdict={VerdictType.FAKE}
+                probability={result.probability}
+                verdict={result.verdict}
               />
             </StyledEvaluationWrapper>
           </>

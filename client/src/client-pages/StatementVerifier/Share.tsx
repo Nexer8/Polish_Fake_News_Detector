@@ -1,8 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import _ from 'lodash';
 
 import { Icon } from 'components/Icon';
 import clipboardIcon from 'icons/clipboard.svg';
+import { AlertType, IAlert } from 'components/Alerts/Alert';
+import { addAlert } from 'state/slices/alertSlice';
+import { useAppDispatch } from 'state/hooks';
 
 export interface Props {
   path: string;
@@ -21,15 +25,26 @@ const StyledWrapper = styled.div`
 `;
 
 export const Share: React.FC<Props> = ({ path }) => {
+  const dispatch = useAppDispatch();
+
   const handleClick = () => {
-    // TODO: display custom success/error alerts
     navigator.clipboard
       .writeText(path)
-      .then((_) => {
-        console.log('Path copied to clipboard');
+      .then(() => {
+        dispatch(
+          addAlert({
+            id: _.uniqueId(),
+            message: 'Skopiowano do schowka',
+            type: AlertType.SUCCESS,
+          } as IAlert),
+        );
       })
-      .catch((_) => {
-        console.log('Failed copying to clipboard');
+      .catch(() => {
+        addAlert({
+          id: _.uniqueId(),
+          message: 'Nie udało się skopiować do schowka',
+          type: AlertType.ERROR,
+        } as IAlert);
       });
   };
 

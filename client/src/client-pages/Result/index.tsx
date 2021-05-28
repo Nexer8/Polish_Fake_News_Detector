@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 
 import routes from 'routes';
-import { IResult } from 'models/Result';
 import { MainTemplate } from 'templates/MainTemplate';
 import { headers } from 'headers';
 import { Button } from 'components/Button';
@@ -14,10 +13,10 @@ import { Share } from 'client-pages/StatementVerifier/Share';
 import reloadIcon from 'icons/reload.svg';
 import infoIcon from 'icons/info.svg';
 import flagIcon from 'icons/flag.svg';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { getResult, selectResult } from 'state/slices/clientSlice';
 
-export interface Props {
-  result: IResult;
-}
+export interface Props {}
 
 const Container = styled.div`
   display: flex;
@@ -59,61 +58,71 @@ const StyledHeader = styled.h2`
   margin-bottom: 30px;
 `;
 
-export const Result: React.FC<Props> = ({ result }) => {
+export const Result: React.FC<Props> = () => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const result = useAppSelector(selectResult);
+
+  useEffect(() => {
+    if (result?.id !== id) {
+      dispatch(getResult(id));
+    }
+  }, [id, result?.id, dispatch]);
 
   return (
     <MainTemplate headerItems={headers.client}>
-      <Container>
-        <HeaderRow>
-          <h2>Podejrzana wypowiedź</h2>
-          <ButtonWrapper>
-            <Button
-              isFullWidth={true}
-              title="Sprawdź inną"
-              icon={reloadIcon}
-              onClick={() => {
-                history.push(routes.statementVerifier);
-              }}
+      {result && (
+        <Container>
+          <HeaderRow>
+            <h2>Podejrzana wypowiedź</h2>
+            <ButtonWrapper>
+              <Button
+                isFullWidth={true}
+                title="Sprawdź inną"
+                icon={reloadIcon}
+                onClick={() => {
+                  history.push(routes.statementVerifier);
+                }}
+              />
+            </ButtonWrapper>
+          </HeaderRow>
+          <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
+            {result.statement}
+          </StyledTextDisplay>
+          <HeaderRow>
+            <h2>Ocena wypowiedzi przez model</h2>
+            <Icon
+              svg={infoIcon}
+              hasTooltip={true}
+              alt="Werdykt i pewność, z jaką go stwierdzamy"
             />
-          </ButtonWrapper>
-        </HeaderRow>
-        <StyledTextDisplay isBgDark={false} isBiggerFont={true}>
-          {result.statement}
-        </StyledTextDisplay>
-        <HeaderRow>
-          <h2>Ocena wypowiedzi przez model</h2>
-          <Icon
-            svg={infoIcon}
-            hasTooltip={true}
-            alt="Werdykt i pewność, z jaką go stwierdzamy"
-          />
-        </HeaderRow>
-        <StyledStamentEvaluation>
-          <StatementEvaluation
-            probability={result.probability}
-            verdict={result.verdict}
-          ></StatementEvaluation>
-        </StyledStamentEvaluation>
-        <HeaderRow>
-          <ProblemsText>
-            Jeśli masz wątpliwości, przekaż wynik do weryfikacji.
-          </ProblemsText>
-          <ButtonWrapper>
-            <Button
-              isFullWidth={true}
-              title="Zgłoś wynik"
-              icon={flagIcon}
-              onClick={() => {
-                history.push(routes.resultReport.replace(':id', id));
-              }}
-            />
-          </ButtonWrapper>
-        </HeaderRow>
-        <StyledHeader>Udostępnij wynik</StyledHeader>
-        <Share path={window.location.href} />
-      </Container>
+          </HeaderRow>
+          <StyledStamentEvaluation>
+            <StatementEvaluation
+              probability={result.probability}
+              verdict={result.verdict}
+            ></StatementEvaluation>
+          </StyledStamentEvaluation>
+          <HeaderRow>
+            <ProblemsText>
+              Jeśli masz wątpliwości, przekaż wynik do weryfikacji.
+            </ProblemsText>
+            <ButtonWrapper>
+              <Button
+                isFullWidth={true}
+                title="Zgłoś wynik"
+                icon={flagIcon}
+                onClick={() => {
+                  history.push(routes.resultReport.replace(':id', id));
+                }}
+              />
+            </ButtonWrapper>
+          </HeaderRow>
+          <StyledHeader>Udostępnij wynik</StyledHeader>
+          <Share path={window.location.href} />
+        </Container>
+      )}
     </MainTemplate>
   );
 };

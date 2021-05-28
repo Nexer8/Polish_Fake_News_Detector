@@ -1,29 +1,149 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import _ from 'lodash';
+
+import { RootState } from 'state/store';
+import { AlertType, IAlert } from 'components/Alerts/Alert';
+import { IResult } from 'models/Result';
+import { IReport } from 'models/Report';
+import Routes from 'routes';
 
 export interface ClientState {
-  // TODO: write interface
+  status: 'idle' | 'loading' | 'failed';
+  result: IResult | null;
 }
 
 const initialState: ClientState = {
-  // TODO: write initial state
+  status: 'idle',
+  result: null,
 };
+
+// THUNKS
+export const verifyStatement = createAsyncThunk(
+  'client/verifyStatement',
+  async (statement: string) => {
+    try {
+      const response = await axios.post('/api/client/verify', {
+        statement,
+      });
+      const { _id } = response.data;
+      window.location.href = Routes.result.replace(':id', _id);
+      return {
+        result: {
+          id: _id,
+          ...response.data,
+        },
+      };
+    } catch (err) {
+      return {
+        result: null,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Nie udało się zweryfikować wypowiedzi',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
+  },
+);
+
+export const getResult = createAsyncThunk(
+  'client/getResult',
+  async (id: string) => {
+    try {
+      const response = await axios.get(`/api/client/result/${id}`);
+      const { _id } = response.data;
+
+      return {
+        result: {
+          id: _id,
+          ...response.data,
+        },
+      };
+    } catch (err) {
+      return {
+        result: null,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Nie znaleziono wypowiedzi',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
+  },
+);
+
+export const sendReport = createAsyncThunk(
+  'client/sendReport',
+  async (data: IReport) => {
+    const { reporter, comment, politician, date, category } = data;
+    try {
+      await axios.post(`/api/client/report/${data.id}`, {
+        reporter,
+        comment,
+        politician,
+        date,
+        category,
+      });
+
+      window.location.href = Routes.result.replace(':id', data.id);
+
+      return {
+        success: true,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Wysłano zgłoszenie!',
+        } as IAlert,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        alert: {
+          id: _.uniqueId(),
+          message: 'Wystąpił błąd przy wysyłaniu zgłoszenia!',
+          type: AlertType.ERROR,
+        } as IAlert,
+      };
+    }
+  },
+);
 
 export const clientSlice = createSlice({
   name: 'client',
   initialState,
-  reducers: {
-    // TODO: write reducers
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(verifyStatement.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(verifyStatement.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.result = action.payload.result;
+      });
+
+    builder
+      .addCase(getResult.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getResult.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.result = action.payload.result;
+      });
+
+    builder
+      .addCase(sendReport.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(sendReport.fulfilled, (state) => {
+        state.status = 'idle';
+      });
   },
-  // TODO: write extraReducers for asyncs
 });
 
-// ACTIONS
-// TODO: assign actions
-
-// THUNKS
-// TODO: write async functions
-
 // SELECTORS
-// TODO: write selectors
+export const selectClientStatus = (state: RootState) => state.client.status;
+export const selectId = (state: RootState) => state.client.result?.id;
+export const selectResult = (state: RootState) => state.client.result;
 
 export default clientSlice.reducer;

@@ -9,6 +9,7 @@ import {
   selectEditorLoggedIn,
   selectEditorStatus,
 } from 'state/slices/editorSlice';
+import { selectClientStatus } from 'state/slices/clientSlice';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { EditorReports } from 'editor-pages/EditorReports';
 import { EditorReport } from 'editor-pages/EditorReport';
@@ -16,17 +17,8 @@ import { EditorLogin } from 'editor-pages/EditorLogin';
 import { Result } from 'client-pages/Result';
 import { ResultReport } from 'client-pages/ResultReport';
 import { StatementVerifier } from 'client-pages/StatementVerifier';
-import { VerdictType } from 'components/StatementEvaluation';
-import { IResult } from 'models/Result';
 import { Alerts } from 'components/Alerts';
 import { Spinner } from 'components/Spinner';
-
-const testResultData: IResult = {
-  statement: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-  verdict: VerdictType.TRUTH,
-  probability: 97,
-  id: 'chyba-niepotrzebne-bo-jest-w-url',
-};
 
 const StyledSpinnerWrapper = styled.div`
   display: flex;
@@ -51,6 +43,8 @@ const Root: React.FC = () => {
 
   const alerts = useAppSelector(selectAlerts);
   const editorStatus = useAppSelector(selectEditorStatus);
+  const clientStatus = useAppSelector(selectClientStatus);
+
   const isLoggedIn = useAppSelector(selectEditorLoggedIn);
 
   useEffect(() => {
@@ -58,8 +52,8 @@ const Root: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setLoading(editorStatus === 'loading');
-  }, [editorStatus]);
+    setLoading(editorStatus === 'loading' || clientStatus === 'loading');
+  }, [editorStatus, clientStatus]);
 
   return (
     <>
@@ -98,7 +92,7 @@ const Root: React.FC = () => {
               <EditorLogin />
             </Route>
             <Route path={routes.result} exact>
-              <Result result={testResultData} />
+              <Result />
             </Route>
             <Route path={routes.resultReport} exact>
               <ResultReport />

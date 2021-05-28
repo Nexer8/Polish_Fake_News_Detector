@@ -7,6 +7,8 @@ import { headers } from 'headers';
 import clipboardIcon from 'icons/clipboard.svg';
 import { Textarea } from 'components/Textarea';
 import { CharacterCounter } from './CharacterCounter';
+import { useAppDispatch } from 'state/hooks';
+import { verifyStatement } from 'state/slices/clientSlice';
 
 const HEADING: string = 'Sprawdź wypowiedź';
 const MAX_CHARACTERS_VALUE: number = 1000;
@@ -15,9 +17,7 @@ const PLACEHOLDER_VALUE: string =
   'Wprowadź, bądź wklej treść wiadomości do zweryfikowania.';
 const VERIFY_BUTTON_TITLE: string = 'Zweryfikuj';
 
-interface Props {
-  // TODO: define props here
-}
+interface Props {}
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -48,9 +48,12 @@ const StyledFooter = styled.div`
 export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    value.length > MAX_CHARACTERS_VALUE ? setValid(false) : setValid(true);
+    value.length > MAX_CHARACTERS_VALUE || value.length === 0
+      ? setValid(false)
+      : setValid(true);
   }, [value]);
 
   const handlePasteClick = () => {
@@ -59,11 +62,11 @@ export const StatementVerifier: React.FC<Props> = () => {
 
   const handleVerifyClick = () => {
     // TODO: button should be disabled when isValid === false
-    // TODO: handle verify click
+    dispatch(verifyStatement(value));
   };
 
   return (
-    <MainTemplate  headerItems={headers.client}>
+    <MainTemplate headerItems={headers.client}>
       <StyledWrapper>
         <StyledHeader>
           <h2>{HEADING}</h2>
@@ -79,7 +82,7 @@ export const StatementVerifier: React.FC<Props> = () => {
             setValue(e.target.value);
           }}
           placeholder={PLACEHOLDER_VALUE}
-        />
+        ></StyledTextarea>
         <StyledFooter>
           <CharacterCounter
             currentCount={value.length}
@@ -87,6 +90,7 @@ export const StatementVerifier: React.FC<Props> = () => {
             maxCharacters={MAX_CHARACTERS_VALUE}
           />
           <Button
+            isDisabled={!isValid}
             title={VERIFY_BUTTON_TITLE}
             icon={clipboardIcon}
             onClick={handleVerifyClick}
