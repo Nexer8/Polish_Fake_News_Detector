@@ -70,11 +70,11 @@ export const logoutAsync = createAsyncThunk('editor/logout', async () => {
 
 export const loginAsync = createAsyncThunk(
   'editor/login',
-  async (data: { email: string; password: string }) => {
+  async (data: { email: string; password: string; history: any }) => {
     try {
       await loginAPI(data.email, data.password);
 
-      window.location.href = Routes.editorReports;
+      data.history.push(Routes.editorReports);
 
       return {
         success: true,
@@ -98,9 +98,16 @@ export const loginAsync = createAsyncThunk(
 
 export const reviewAsync = createAsyncThunk(
   'editor/review',
-  async (data: { reportId: string; comment: string; verdict: VerdictType }) => {
+  async (data: {
+    reportId: string;
+    comment: string;
+    verdict: VerdictType;
+    history: any;
+  }) => {
     try {
       await reviewAPI(data.reportId, data.comment, data.verdict);
+
+      data.history.push(Routes.editorReports);
 
       return {
         alert: {

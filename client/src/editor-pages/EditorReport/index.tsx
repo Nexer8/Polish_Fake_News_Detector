@@ -130,6 +130,8 @@ export const EditorReport: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const report = useAppSelector(selectCurrentReport);
 
+  const history = useHistory();
+
   const { id: idParam } = useParams<{ id: string }>();
 
   const [
@@ -155,13 +157,12 @@ export const EditorReport: React.FC<Props> = () => {
             reportId: report.id,
             comment: values.comment,
             verdict: values.verdict.name as VerdictType,
+            history,
           }),
         );
       }
     },
   });
-
-  const history = useHistory();
 
   const navigateToReportsList = () => {
     history.push(Routes.editorReports);
