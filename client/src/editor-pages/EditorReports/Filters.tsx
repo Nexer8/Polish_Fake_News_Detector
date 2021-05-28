@@ -12,6 +12,7 @@ import { Button } from 'components/Button';
 import { DateInput } from 'components/DateInput';
 import { Input } from 'components/Input';
 import { DropdownItem, Select } from 'components/Select';
+import categories from 'constants/categories';
 
 export const CATEGORY_FIELD: string = 'category';
 export const DATE_FROM_FIELD: string = 'dateFrom';
@@ -37,25 +38,6 @@ export interface Props {
   onApplyClick: (form: FiltersFormType) => void;
   onResetClick: () => void;
 }
-
-// TODO: provide valid categories (prossibly fetch from backend)
-const categories: DropdownItem[] = [
-  {
-    name: 'Lorem',
-  },
-  {
-    name: 'Ipsum',
-  },
-  {
-    name: 'Dolor Sit',
-  },
-  {
-    name: 'Amet',
-  },
-  {
-    name: 'Ars bene moriendi',
-  },
-];
 
 const StyledWrapper = styled.div`
   display: flex;

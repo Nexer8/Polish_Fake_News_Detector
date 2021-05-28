@@ -7,7 +7,7 @@ import {
   StatementEvaluation,
   VerdictType,
 } from 'components/StatementEvaluation';
-import { headers } from 'headers';
+import { headers } from 'constants/headers';
 import { ReturnButton } from 'components/ReturnButton';
 import { TextDisplay } from 'components/TextDisplay';
 import { Button } from 'components/Button';

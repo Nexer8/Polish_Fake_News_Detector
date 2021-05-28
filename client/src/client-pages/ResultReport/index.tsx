@@ -12,7 +12,7 @@ import userIcon from 'icons/user.svg';
 import cancelIcon from 'icons/close.svg';
 import sendIcon from 'icons/send.svg';
 import { Navigation, NavigationItem } from 'components/Navigation';
-import { headers } from 'headers';
+import { headers } from 'constants/headers';
 import { ReturnButton } from 'components/ReturnButton';
 import { TextDisplay } from 'components/TextDisplay';
 import { Input } from 'components/Input';
@@ -25,6 +25,7 @@ import Routes from 'routes';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { selectResult, getResult, sendReport } from 'state/slices/clientSlice';
 import { IReport } from 'models/Report';
+import categories from 'constants/categories';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -47,24 +48,6 @@ const navigationItems = [
   {
     name: NAVIGATION_ITEM_PREVIEW,
     icon: eyeIcon,
-  },
-];
-
-const categories: DropdownItem[] = [
-  {
-    name: 'Finanse',
-  },
-  {
-    name: 'Polityka krajowa',
-  },
-  {
-    name: 'Polityka międzynarodowa',
-  },
-  {
-    name: 'Polityka społeczna',
-  },
-  {
-    name: 'Samorządy',
   },
 ];
 

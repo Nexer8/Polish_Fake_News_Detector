@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useFormik } from 'formik';
 
 import { MainTemplate } from 'templates/MainTemplate';
-import { headers } from 'headers';
+import { headers } from 'constants/headers';
 import { EMAIL_FIELD } from 'client-pages/ResultReport';
 import { Input } from 'components/Input';
 import { Button } from 'components/Button';
