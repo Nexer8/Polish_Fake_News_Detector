@@ -21,13 +21,16 @@ const initialState: ClientState = {
 // THUNKS
 export const verifyStatement = createAsyncThunk(
   'client/verifyStatement',
-  async (statement: string) => {
+  async (data: { statement: string; history: any }) => {
     try {
+      const { history, statement } = data;
       const response = await axios.post('/api/client/verify', {
         statement,
       });
       const { _id } = response.data;
-      window.location.href = Routes.result.replace(':id', _id);
+
+      history.push(Routes.result.replace(':id', _id));
+
       return {
         result: {
           id: _id,
@@ -75,10 +78,10 @@ export const getResult = createAsyncThunk(
 
 export const sendReport = createAsyncThunk(
   'client/sendReport',
-  async (data: IReport) => {
-    const { reporter, comment, politician, date, category } = data;
+  async (data: { report: IReport; history: any }) => {
+    const { id, reporter, comment, politician, date, category } = data.report;
     try {
-      await axios.post(`/api/client/report/${data.id}`, {
+      await axios.post(`/api/client/report/${id}`, {
         reporter,
         comment,
         politician,
@@ -86,7 +89,7 @@ export const sendReport = createAsyncThunk(
         category,
       });
 
-      window.location.href = Routes.result.replace(':id', data.id);
+      data.history.push(Routes.result.replace(':id', id));
 
       return {
         success: true,

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useFormik } from 'formik';
 
 import { MainTemplate } from 'templates/MainTemplate';
-import { headers } from 'headers';
+import { headers } from 'constants/headers';
 import { EMAIL_FIELD } from 'client-pages/ResultReport';
 import { Input } from 'components/Input';
 import { Button } from 'components/Button';
@@ -12,6 +12,7 @@ import keyIcon from 'icons/key-active.svg';
 import logoutIcon from 'icons/logout-active.svg';
 import { useAppDispatch } from 'state/hooks';
 import { loginAsync } from 'state/slices/editorSlice';
+import { useHistory } from 'react-router';
 
 const HEADING: string = 'Logowanie';
 const PASSWORD_FIELD: string = 'password';
@@ -42,6 +43,7 @@ const ButtonWrapper = styled.div`
 
 export const EditorLogin: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const formik = useFormik({
     initialValues: {
@@ -53,6 +55,7 @@ export const EditorLogin: React.FC<Props> = () => {
         loginAsync({
           email: values[EMAIL_FIELD],
           password: values[PASSWORD_FIELD],
+          history,
         }),
       );
     },

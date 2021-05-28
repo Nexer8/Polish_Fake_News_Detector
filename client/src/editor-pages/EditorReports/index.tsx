@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router';
 import _ from 'lodash';
 
 import routes from 'routes';
-import { headers } from 'headers';
+import { headers } from 'constants/headers';
 import { SidebarTemplate } from 'templates/SidebarTemplate';
 import { Report } from 'editor-pages/EditorReports/Report';
 import { ResultsFilterInfo } from 'components/ResultsFilterInfo';

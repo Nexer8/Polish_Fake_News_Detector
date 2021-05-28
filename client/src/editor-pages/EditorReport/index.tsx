@@ -7,7 +7,7 @@ import {
   StatementEvaluation,
   VerdictType,
 } from 'components/StatementEvaluation';
-import { headers } from 'headers';
+import { headers } from 'constants/headers';
 import { ReturnButton } from 'components/ReturnButton';
 import { TextDisplay } from 'components/TextDisplay';
 import { Button } from 'components/Button';
@@ -59,6 +59,16 @@ const navigationItems = [
     icon: penIcon,
   },
 ];
+
+const validate = (values: any) => {
+  const errors: { comment?: string } = {};
+
+  if (!values.comment) {
+    errors.comment = 'Komentarz jest wymagany';
+  }
+
+  return errors;
+};
 
 const Container = styled.div`
   margin-left: 145px;
@@ -115,6 +125,11 @@ const StyledTextarea = styled(Textarea)`
   margin-top: 15px;
 `;
 
+const StyledFormError = styled.p`
+  font-size: ${({ theme }) => theme.fontSize.s};
+  color: ${({ theme }) => theme.colors.red};
+`;
+
 const verdicts: DropdownItem[] = [
   {
     name: VerdictType.TRUTH,
@@ -129,6 +144,8 @@ const verdicts: DropdownItem[] = [
 export const EditorReport: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const report = useAppSelector(selectCurrentReport);
+
+  const history = useHistory();
 
   const { id: idParam } = useParams<{ id: string }>();
 
@@ -148,6 +165,7 @@ export const EditorReport: React.FC<Props> = () => {
       comment: '',
       verdict: verdicts[0],
     },
+    validate,
     onSubmit: (values) => {
       if (report) {
         dispatch(
@@ -155,13 +173,12 @@ export const EditorReport: React.FC<Props> = () => {
             reportId: report.id,
             comment: values.comment,
             verdict: values.verdict.name as VerdictType,
+            history,
           }),
         );
       }
     },
   });
-
-  const history = useHistory();
 
   const navigateToReportsList = () => {
     history.push(Routes.editorReports);
@@ -308,6 +325,9 @@ export const EditorReport: React.FC<Props> = () => {
         placeholder="Wprowadź komentarz dotyczący zgłoszenia."
         value={formik.values.comment}
       />
+      {formik.touched && formik.errors.comment ? (
+        <StyledFormError>{formik.errors.comment}</StyledFormError>
+      ) : null}
       <StyledDetailsButtons>
         <StyledButtonMargin>
           <ButtonWrapper>

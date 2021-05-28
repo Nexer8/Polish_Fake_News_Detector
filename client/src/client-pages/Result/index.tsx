@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import routes from 'routes';
 import { MainTemplate } from 'templates/MainTemplate';
-import { headers } from 'headers';
+import { headers } from 'constants/headers';
 import { Button } from 'components/Button';
 import { TextDisplay } from 'components/TextDisplay';
 import { Icon } from 'components/Icon';
