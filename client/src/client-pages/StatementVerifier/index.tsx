@@ -9,6 +9,7 @@ import { Textarea } from 'components/Textarea';
 import { CharacterCounter } from './CharacterCounter';
 import { useAppDispatch } from 'state/hooks';
 import { verifyStatement } from 'state/slices/clientSlice';
+import { useHistory } from 'react-router';
 
 const HEADING: string = 'Sprawdź wypowiedź';
 const MAX_CHARACTERS_VALUE: number = 1000;
@@ -49,6 +50,7 @@ export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     value.length > MAX_CHARACTERS_VALUE || value.length === 0
@@ -61,8 +63,7 @@ export const StatementVerifier: React.FC<Props> = () => {
   };
 
   const handleVerifyClick = () => {
-    // TODO: button should be disabled when isValid === false
-    dispatch(verifyStatement(value));
+    dispatch(verifyStatement({ statement: value, history }));
   };
 
   return (

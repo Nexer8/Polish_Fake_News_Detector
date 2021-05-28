@@ -129,13 +129,16 @@ export const ResultReport: React.FC<Props> = () => {
     onSubmit: async (values) => {
       dispatch(
         sendReport({
-          id: id,
-          reporter: values[EMAIL_FIELD],
-          comment: values[COMMENT_FIELD],
-          politician: values[POLITICIAN_FIELD],
-          date: values[DATE_FIELD],
-          category: values.category.name,
-        } as IReport),
+          report: {
+            id: id,
+            reporter: values[EMAIL_FIELD],
+            comment: values[COMMENT_FIELD],
+            politician: values[POLITICIAN_FIELD],
+            date: values[DATE_FIELD],
+            category: values.category.name,
+          } as IReport,
+          history,
+        }),
       );
     },
   });
