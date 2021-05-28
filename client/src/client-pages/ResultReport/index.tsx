@@ -74,7 +74,6 @@ const StyledTextDisplay = styled(TextDisplay)`
 
 const StyledTextarea = styled(Textarea)`
   margin-top: 15px;
-  margin-bottom: 20px;
 `;
 
 const StyledDateInput = styled(DateInput)`
@@ -94,6 +93,12 @@ export const StyledButtonMargin = styled.div`
 
 const StyledEvaluationWrapper = styled.div`
   margin: 30px 0;
+`;
+
+const StyledFormError = styled.p`
+  font-size: ${({ theme }) => theme.fontSize.s};
+  color: ${({ theme }) => theme.colors.red};
+  margin-bottom: 20px;
 `;
 
 export const ResultReport: React.FC<Props> = () => {
@@ -185,6 +190,11 @@ export const ResultReport: React.FC<Props> = () => {
               placeholder="Wprowadź komentarz dotyczący zgłoszenia."
               value={formik.values[COMMENT_FIELD].toString()}
             />
+            {formik.touched && !formik.isValid && (
+              <StyledFormError>
+                Prawidłowy adres e-mail oraz komentarz są wymagane!
+              </StyledFormError>
+            )}
             <StyledHeading>Dodatkowe informacje</StyledHeading>
             <Input
               icon={userIcon}
