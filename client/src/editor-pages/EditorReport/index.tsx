@@ -60,6 +60,16 @@ const navigationItems = [
   },
 ];
 
+const validate = (values: any) => {
+  const errors: { comment?: string } = {};
+
+  if (!values.comment) {
+    errors.comment = 'Komentarz jest wymagany';
+  }
+
+  return errors;
+};
+
 const Container = styled.div`
   margin-left: 145px;
   max-width: 500px;
@@ -115,6 +125,11 @@ const StyledTextarea = styled(Textarea)`
   margin-top: 15px;
 `;
 
+const StyledFormError = styled.p`
+  font-size: ${({ theme }) => theme.fontSize.s};
+  color: ${({ theme }) => theme.colors.red};
+`;
+
 const verdicts: DropdownItem[] = [
   {
     name: VerdictType.TRUTH,
@@ -150,6 +165,7 @@ export const EditorReport: React.FC<Props> = () => {
       comment: '',
       verdict: verdicts[0],
     },
+    validate,
     onSubmit: (values) => {
       if (report) {
         dispatch(
@@ -309,6 +325,9 @@ export const EditorReport: React.FC<Props> = () => {
         placeholder="Wprowadź komentarz dotyczący zgłoszenia."
         value={formik.values.comment}
       />
+      {formik.touched && formik.errors.comment ? (
+        <StyledFormError>{formik.errors.comment}</StyledFormError>
+      ) : null}
       <StyledDetailsButtons>
         <StyledButtonMargin>
           <ButtonWrapper>
