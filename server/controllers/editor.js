@@ -67,18 +67,12 @@ module.exports = {
       html,
     };
 
-    await mailgun
-      .messages()
-      .send(data)
-      .then((res) => {
-        report.resolved = true;
-        report.save();
+    await mailgun.messages().send(data);
 
-        res.status(200).json({ message: "E-mail sent" });
-      })
-      .catch((err) => {
-        res.status(500).json({ error: { message: err.message } });
-      });
+    report.resolved = true;
+    report.save();
+
+    res.status(200).json({ message: "E-mail sent" });
   },
 
   getReport: async (req, res, next) => {
@@ -95,6 +89,7 @@ module.exports = {
 
   getReports: async (req, res, next) => {
     const { category, dateFrom, dateTo, politician } = req.query;
+    console.log(category, dateFrom, dateTo, politician);
 
     const reports = await Report.find({}).populate("result");
 
@@ -102,7 +97,7 @@ module.exports = {
 
     if (category) {
       filteredReports = filteredReports.filter((report) =>
-        report.category.toUpperCase().includes(category.toUpperCase())
+        report.category?.toUpperCase().includes(category.toUpperCase())
       );
     }
 
@@ -140,7 +135,7 @@ module.exports = {
 
     if (politician) {
       filteredReports = filteredReports.filter((report) =>
-        report.politician.toUpperCase().includes(politician.toUpperCase())
+        report.politician?.toUpperCase().includes(politician.toUpperCase())
       );
     }
 
