@@ -54,7 +54,6 @@ module.exports = {
   },
 
   schemas: {
-    // TODO: adjust schemas based on routes
     idParamSchema: Joi.object({
       param: Joi.string()
         .regex(/^[0-9a-fA-F]{24}$/)

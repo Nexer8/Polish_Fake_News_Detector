@@ -18,24 +18,33 @@ module.exports = {
   verify: async (req, res, next) => {
     const { statement } = req.value.body;
 
-    const result = await axios.post("http://127.0.0.1:8000/classify", {
-      statement: statement,
-    });
-    const fakeProbability = result.data.fake;
-    const trueProbability = result.data.true;
-    const verdict = trueProbability > fakeProbability ? "Prawda" : "Fałsz";
-    let probability =
-      trueProbability > fakeProbability ? trueProbability : fakeProbability;
-    probability = Math.round(probability * 100);
+    let result = await Result.findOne({ statement });
 
-    const resultObject = new Result({
-      statement,
-      verdict,
-      probability,
-    });
-    await resultObject.save();
+    if (!result) {
+      const response = await axios.post("http://127.0.0.1:8000/classify", {
+        statement: statement,
+      });
 
-    res.status(200).json(resultObject);
+      const fakeProbability = response.data.fake;
+      const trueProbability = response.data.true;
+
+      const verdict = trueProbability > fakeProbability ? "Prawda" : "Fałsz";
+
+      let probability =
+        trueProbability > fakeProbability ? trueProbability : fakeProbability;
+
+      probability = Math.round(probability * 100);
+
+      result = new Result({
+        statement,
+        verdict,
+        probability,
+      });
+
+      await result.save();
+    }
+
+    res.status(200).json(result);
   },
 
   report: async (req, res, next) => {
