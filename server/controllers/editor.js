@@ -97,7 +97,7 @@ module.exports = {
 
     if (category) {
       filteredReports = filteredReports.filter((report) =>
-        report.category.toUpperCase().includes(category.toUpperCase())
+        report.category?.toUpperCase().includes(category.toUpperCase())
       );
     }
 
@@ -135,7 +135,7 @@ module.exports = {
 
     if (politician) {
       filteredReports = filteredReports.filter((report) =>
-        report.politician.toUpperCase().includes(politician.toUpperCase())
+        report.politician?.toUpperCase().includes(politician.toUpperCase())
       );
     }
 
