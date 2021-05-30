@@ -1,5 +1,5 @@
 import { Button } from 'components/Button';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { MainTemplate } from 'templates/MainTemplate';
@@ -10,7 +10,7 @@ import { CharacterCounter } from './CharacterCounter';
 import { useAppDispatch } from 'state/hooks';
 import { verifyStatement } from 'state/slices/clientSlice';
 import { useHistory } from 'react-router';
-import { GoogleReCaptcha, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const HEADING: string = 'Sprawdź wypowiedź';
 const MAX_CHARACTERS_VALUE: number = 1000;
@@ -50,7 +50,6 @@ const StyledFooter = styled.div`
 export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
-  const [token, setToken] = useState('');
 
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -67,28 +66,17 @@ export const StatementVerifier: React.FC<Props> = () => {
     navigator.clipboard.readText().then((text) => setValue(text));
   };
 
-  const handleVerifyClick = useCallback(async () => {
+  const handleVerifyClick = async () => {
     if (!executeRecaptcha) {
       return;
     }
 
-    const result = await executeRecaptcha();
-
-    setToken(result);
+    const token = await executeRecaptcha();
 
     dispatch(
       verifyStatement({ statement: value, history, captchaToken: token }),
     );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, executeRecaptcha, value]);
-
-  const handleReCaptchaVerify = useCallback(
-    (token) => {
-      setToken(token);
-    },
-    [setToken],
-  );
+  };
 
   return (
     <MainTemplate headerItems={headers.client}>
@@ -108,7 +96,6 @@ export const StatementVerifier: React.FC<Props> = () => {
           }}
           placeholder={PLACEHOLDER_VALUE}
         ></StyledTextarea>
-        <GoogleReCaptcha onVerify={handleReCaptchaVerify} />
         <StyledFooter>
           <CharacterCounter
             currentCount={value.length}
