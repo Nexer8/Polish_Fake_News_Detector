@@ -72,6 +72,7 @@ module.exports = {
     }),
     verifyStatementBodySchema: Joi.object({
       statement: Joi.string().required(),
+      captchaToken: Joi.string().required(),
     }),
     reportBodySchema: Joi.object({
       category: Joi.string().allow(null, ""),
@@ -79,6 +80,7 @@ module.exports = {
       date: Joi.string().allow(null, ""),
       politician: Joi.string().allow(null, ""),
       reporter: Joi.string().email().required(),
+      captchaToken: Joi.string().required(),
     }),
   },
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
 import { useParams, useHistory } from 'react-router-dom';
@@ -26,6 +26,7 @@ import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { selectResult, getResult, sendReport } from 'state/slices/clientSlice';
 import { IReport } from 'models/Report';
 import categories from 'constants/categories';
+import { GoogleReCaptcha, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -106,10 +107,12 @@ export const ResultReport: React.FC<Props> = () => {
     navigationSelectedItem,
     setNavigationSelectedItem,
   ] = useState<NavigationItem>(navigationItems[0]);
+  const [token, setToken] = useState('');
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const result = useAppSelector(selectResult);
   const dispatch = useAppDispatch();
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   useEffect(() => {
     if (result?.id !== id) {
@@ -132,6 +135,14 @@ export const ResultReport: React.FC<Props> = () => {
         .required(REQUIRED_FIELD_MESSAGE),
     }),
     onSubmit: async (values) => {
+      if (!executeRecaptcha) {
+        return;
+      }
+
+      const result = await executeRecaptcha();
+
+      setToken(result);
+
       dispatch(
         sendReport({
           report: {
@@ -143,6 +154,7 @@ export const ResultReport: React.FC<Props> = () => {
             category: values.category.name,
           } as IReport,
           history,
+          captchaToken: token,
         }),
       );
     },
@@ -151,6 +163,13 @@ export const ResultReport: React.FC<Props> = () => {
   const handleCancel = () => {
     history.push(Routes.statementVerifier);
   };
+
+  const handleReCaptchaVerify = useCallback(
+    (token) => {
+      setToken(token);
+    },
+    [setToken],
+  );
 
   return (
     <SidebarTemplate
@@ -166,6 +185,7 @@ export const ResultReport: React.FC<Props> = () => {
       headerItems={headers.client}
     >
       <StyledWrapper>
+        <GoogleReCaptcha onVerify={handleReCaptchaVerify} />
         <ReturnButton
           text="Wróć do wyniku"
           path={Routes.result.replace(':id', id)}

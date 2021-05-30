@@ -3,6 +3,8 @@ const axios = require("axios");
 const Result = require("../models/Result");
 const Report = require("../models/Report");
 
+const { verifyCaptcha } = require("../helpers/captchaHelpers");
+
 module.exports = {
   getResult: async (req, res, next) => {
     const { resultId } = req.value.params;
@@ -16,7 +18,14 @@ module.exports = {
   },
 
   verify: async (req, res, next) => {
-    const { statement } = req.value.body;
+    const { statement, captchaToken } = req.value.body;
+
+    const isCaptchaValid = await verifyCaptcha(captchaToken);
+
+    if (!isCaptchaValid) {
+      res.status(500).json({ error: { message: "It seems you're a robot!" } });
+      return;
+    }
 
     let result = await Result.findOne({ statement });
 
@@ -49,7 +58,15 @@ module.exports = {
 
   report: async (req, res, next) => {
     const { resultId } = req.value.params;
-    const { category, comment, date, politician, reporter } = req.value.body;
+    const { category, comment, date, politician, reporter, captchaToken } =
+      req.value.body;
+
+    const isCaptchaValid = await verifyCaptcha(captchaToken);
+
+    if (!isCaptchaValid) {
+      res.status(500).json({ error: { message: "It seems you're a robot!" } });
+      return;
+    }
 
     const result = await Result.findById(resultId);
 

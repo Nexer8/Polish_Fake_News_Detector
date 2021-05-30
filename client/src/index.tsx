@@ -9,13 +9,18 @@ import GlobalStyle from 'theme/GlobalStyle';
 import { theme } from 'theme/mainTheme';
 
 import 'normalize.css';
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
-        <Root />
+        <GoogleReCaptchaProvider
+          reCaptchaKey={process.env.REACT_APP_RECAPTCHA_KEY}
+        >
+          <Root />
+        </GoogleReCaptchaProvider>
       </ThemeProvider>
     </Provider>
   </React.StrictMode>,
