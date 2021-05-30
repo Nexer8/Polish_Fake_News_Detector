@@ -7,8 +7,8 @@ import { headers } from 'constants/headers';
 import clipboardIcon from 'icons/clipboard.svg';
 import { Textarea } from 'components/Textarea';
 import { CharacterCounter } from './CharacterCounter';
-import { useAppDispatch } from 'state/hooks';
-import { verifyStatement } from 'state/slices/clientSlice';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { selectClientStatus, verifyStatement } from 'state/slices/clientSlice';
 import { useHistory } from 'react-router';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
@@ -51,6 +51,8 @@ export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
 
+  const clientStatus = useAppSelector(selectClientStatus);
+
   const dispatch = useAppDispatch();
   const history = useHistory();
 
@@ -67,7 +69,7 @@ export const StatementVerifier: React.FC<Props> = () => {
   };
 
   const handleVerifyClick = async () => {
-    if (!executeRecaptcha) {
+    if (!executeRecaptcha || clientStatus === 'loading') {
       return;
     }
 
