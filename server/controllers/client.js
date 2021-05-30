@@ -21,7 +21,7 @@ module.exports = {
     let result = await Result.findOne({ statement });
 
     if (!result) {
-      const response = await axios.post("http://127.0.0.1:8000/classify", {
+      const response = await axios.post("http://backend:8000/classify", {
         statement: statement,
       });
 
