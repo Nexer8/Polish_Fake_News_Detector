@@ -23,9 +23,15 @@ import { Button } from 'components/Button';
 import { StatementEvaluation } from 'components/StatementEvaluation';
 import Routes from 'routes';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { selectResult, getResult, sendReport } from 'state/slices/clientSlice';
+import {
+  selectResult,
+  getResult,
+  sendReport,
+  selectClientStatus,
+} from 'state/slices/clientSlice';
 import { IReport } from 'models/Report';
 import categories from 'constants/categories';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 export const EMAIL_FIELD: string = 'email';
 export const COMMENT_FIELD: string = 'comment';
@@ -106,10 +112,15 @@ export const ResultReport: React.FC<Props> = () => {
     navigationSelectedItem,
     setNavigationSelectedItem,
   ] = useState<NavigationItem>(navigationItems[0]);
+
+  const clientStatus = useAppSelector(selectClientStatus);
+  const result = useAppSelector(selectResult);
+
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
-  const result = useAppSelector(selectResult);
   const dispatch = useAppDispatch();
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   useEffect(() => {
     if (result?.id !== id) {
@@ -132,6 +143,12 @@ export const ResultReport: React.FC<Props> = () => {
         .required(REQUIRED_FIELD_MESSAGE),
     }),
     onSubmit: async (values) => {
+      if (!executeRecaptcha || clientStatus === 'loading') {
+        return;
+      }
+
+      const token = await executeRecaptcha();
+
       dispatch(
         sendReport({
           report: {
@@ -143,6 +160,7 @@ export const ResultReport: React.FC<Props> = () => {
             category: values.category.name,
           } as IReport,
           history,
+          captchaToken: token,
         }),
       );
     },

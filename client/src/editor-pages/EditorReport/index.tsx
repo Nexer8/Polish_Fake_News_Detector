@@ -35,6 +35,7 @@ import {
   selectCurrentReport,
   fetchReportAsync,
   reviewAsync,
+  selectEditorStatus,
 } from 'state/slices/editorSlice';
 
 const NAVIGATION_ITEM_REPORT = 'Zgłaszany wynik';
@@ -147,6 +148,8 @@ export const EditorReport: React.FC<Props> = () => {
 
   const history = useHistory();
 
+  const editorStatus = useAppSelector(selectEditorStatus);
+
   const { id: idParam } = useParams<{ id: string }>();
 
   const [
@@ -167,7 +170,7 @@ export const EditorReport: React.FC<Props> = () => {
     },
     validate,
     onSubmit: (values) => {
-      if (report) {
+      if (report && editorStatus !== 'loading') {
         dispatch(
           reviewAsync({
             reportId: report.id,

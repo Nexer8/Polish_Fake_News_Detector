@@ -7,9 +7,10 @@ import { headers } from 'constants/headers';
 import clipboardIcon from 'icons/clipboard.svg';
 import { Textarea } from 'components/Textarea';
 import { CharacterCounter } from './CharacterCounter';
-import { useAppDispatch } from 'state/hooks';
-import { verifyStatement } from 'state/slices/clientSlice';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { selectClientStatus, verifyStatement } from 'state/slices/clientSlice';
 import { useHistory } from 'react-router';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const HEADING: string = 'Sprawdź wypowiedź';
 const MAX_CHARACTERS_VALUE: number = 1000;
@@ -49,8 +50,13 @@ const StyledFooter = styled.div`
 export const StatementVerifier: React.FC<Props> = () => {
   const [value, setValue] = useState<string>('');
   const [isValid, setValid] = useState<boolean>(true);
+
+  const clientStatus = useAppSelector(selectClientStatus);
+
   const dispatch = useAppDispatch();
   const history = useHistory();
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   useEffect(() => {
     value.length > MAX_CHARACTERS_VALUE || value.length === 0
@@ -62,8 +68,16 @@ export const StatementVerifier: React.FC<Props> = () => {
     navigator.clipboard.readText().then((text) => setValue(text));
   };
 
-  const handleVerifyClick = () => {
-    dispatch(verifyStatement({ statement: value, history }));
+  const handleVerifyClick = async () => {
+    if (!executeRecaptcha || clientStatus === 'loading') {
+      return;
+    }
+
+    const token = await executeRecaptcha();
+
+    dispatch(
+      verifyStatement({ statement: value, history, captchaToken: token }),
+    );
   };
 
   return (

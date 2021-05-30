@@ -21,11 +21,12 @@ const initialState: ClientState = {
 // THUNKS
 export const verifyStatement = createAsyncThunk(
   'client/verifyStatement',
-  async (data: { statement: string; history: any }) => {
+  async (data: { statement: string; history: any; captchaToken: string }) => {
     try {
-      const { history, statement } = data;
+      const { history, statement, captchaToken } = data;
       const response = await axios.post('/api/client/verify', {
         statement,
+        captchaToken,
       });
       const { _id } = response.data;
 
@@ -78,7 +79,8 @@ export const getResult = createAsyncThunk(
 
 export const sendReport = createAsyncThunk(
   'client/sendReport',
-  async (data: { report: IReport; history: any }) => {
+  async (data: { report: IReport; history: any; captchaToken: string }) => {
+    const { captchaToken } = data;
     const { id, reporter, comment, politician, date, category } = data.report;
     try {
       await axios.post(`/api/client/report/${id}`, {
@@ -87,6 +89,7 @@ export const sendReport = createAsyncThunk(
         politician,
         date,
         category,
+        captchaToken,
       });
 
       data.history.push(Routes.result.replace(':id', id));
