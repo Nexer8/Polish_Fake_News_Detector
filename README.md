@@ -3,8 +3,6 @@
 Application's purpose is to detect fake news in Polish.
 Description (in polish) available in report.pdf
 
-Notes: https://drive.google.com/drive/folders/1TcSwB1FPnDxofhXQszAL_Su2EUMOzpwA?usp=sharing
-
 # Wiki
 
 First, to run every part, switch to its directory
