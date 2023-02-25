@@ -21,7 +21,7 @@ python3 -m venv venv
 
 ```bash
 . venv/bin/activate
-pip3 install -r requiremnts.txt
+pip3 install -r requirements.txt
 ```
 
 ##### Commands list
@@ -52,7 +52,7 @@ yarn start
 
 ### Warning
 
-This lpmn*client library provided by \_Clarin-PL* will not run successfully on Windows.
+The `lpmn_client` library provided by _Clarin-PL_ will not run successfully on Windows.
 
 ### Instruction
 
