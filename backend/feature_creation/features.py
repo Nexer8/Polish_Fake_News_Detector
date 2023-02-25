@@ -1,119 +1,80 @@
+import os
 import string
-from lpmn_client.src.requester import Requester
-import zipfile
+
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-
-from text_preprocessing.text_preprocessing import clean_text
+from text_preprocessing.text_preprocessing import (TEMP_FILE,
+                                                   get_lemmatized_texts_dict,
+                                                   get_sentiment,
+                                                   get_sentiments_dict,
+                                                   lemmatize,
+                                                   parse_lemmatization,
+                                                   parse_sentiment)
 
 
 def count_uppercase_letters(text):
     count = sum([1 for char in text if char.isupper()])
-    return (count / (len(text) - text.count(' '))) * 100
+    return (count / (len(text) - text.count(' ')))
 
 
 def count_exclamation_marks(text):
     count = text.count('!')
-    return (count / (len(text) - text.count(' '))) * 100
+    return (count / (len(text) - text.count(' ')))
 
 
 def count_question_marks(text):
     count = text.count('?')
-    return (count / (len(text) - text.count(' '))) * 100
+    return (count / (len(text) - text.count(' ')))
 
 
 def count_quotation_marks(text):
     count = text.count('"')
-    return (count / (len(text) - text.count(' '))) * 100
+    return (count / (len(text) - text.count(' ')))
 
 
 def count_punctuation(text):
     count = sum([1 for char in text if char in string.punctuation])
-    return (count / (len(text) - text.count(' '))) * 100
+    return (count / (len(text) - text.count(' ')))
 
 
 def count_text_length(text):
     return len(text) - text.count(' ')
 
 
-def get_sentiment(text):
-    requester = Requester('241393@student.pwr.edu.pl')
-    lpmn_query = 'any2txt|wcrft2|wsd|ccl_emo({"lang":"polish"})|ccl_emo_stats({' \
-                 '"lang":"polish", "split_paragraphs": false})'
-
-    string_ids = requester.upload_strings([text])
-    response = requester.process_query(lpmn_query, [string_id.text for string_id in string_ids])
-    requester.download_response(response[0], './sentiment.zip')
-
-    try:
-        with zipfile.ZipFile('sentiment.zip', 'r') as archive:
-            with archive.open(archive.namelist()[0]) as data:
-                df = pd.read_csv(data, sep=';')
-
-        sentiment_value = sum([int(entry) for entry in df['Polarity'].values if
-                               (type(entry) == str and entry.isnumeric()) or isinstance(entry, (int, float, complex))])
-    except Exception as e:
-        print(e)
-        sentiment_value = 0
-
-    return sentiment_value
-
-
-def count_positive_words():
-    try:
-        with zipfile.ZipFile('sentiment.zip', 'r') as archive:
-            with archive.open(archive.namelist()[0]) as data:
-                df = pd.read_csv(data, sep=';')
-
-        positive_words = (sum([1 for entry in df['Polarity'].values if
-                               (type(entry) == str and entry.isnumeric() or isinstance(entry,
-                                                                                       (int, float, complex))) and int(
-                                   entry) > 0]) / len(df['Polarity'])) * 100
-    except Exception as e:
-        print(e)
-        positive_words = 0
-
-    return positive_words
-
-
-def count_negative_words():
-    try:
-        with zipfile.ZipFile('sentiment.zip', 'r') as archive:
-            with archive.open(archive.namelist()[0]) as data:
-                df = pd.read_csv(data, sep=';')
-
-        negative_words = (sum([1 for entry in df['Polarity'].values if
-                               (type(entry) == str and entry.isnumeric() or isinstance(entry,
-                                                                                       (int, float, complex))) and int(
-                                   entry) < 0]) / len(df['Polarity'])) * 100
-    except Exception as e:
-        print(e)
-        negative_words = 0
-
-    return negative_words
-
-
 def create_features(df: pd.DataFrame):
-    df['uppercase%'] = df['content'].apply(lambda x: count_uppercase_letters(x))
-    df['exclamation_mark%'] = df['content'].apply(lambda x: count_exclamation_marks(x))
-    df['question_mark%'] = df['content'].apply(lambda x: count_question_marks(x))
-    df['quotation_mark%'] = df['content'].apply(lambda x: count_quotation_marks(x))
+    df['uppercase%'] = df['content'].apply(
+        lambda x: count_uppercase_letters(x))
+    df['exclamation_mark%'] = df['content'].apply(
+        lambda x: count_exclamation_marks(x))
+    df['question_mark%'] = df['content'].apply(
+        lambda x: count_question_marks(x))
+    df['quotation_mark%'] = df['content'].apply(
+        lambda x: count_quotation_marks(x))
     df['punctuation%'] = df['content'].apply(lambda x: count_punctuation(x))
     df['length'] = df['content'].apply(lambda x: count_text_length(x))
 
     rows_list = []
-    for index, row in df.iterrows():
-        dictionary = {'sentiment': get_sentiment(df.at[index, 'content']),
-                      'positive_words%': count_positive_words(),
-                      'negative_words%': count_negative_words()}
+    for index, _ in df.iterrows():
+        try:
+            sentiments_dict = get_sentiments_dict(df)
+            lemmatized_texts_dict = get_lemmatized_texts_dict(df)
+            sentiment, positive_words, negative_words = parse_sentiment(
+                sentiments_dict[f'{index}.txt'])
+            cleaned_text = parse_lemmatization(
+                lemmatized_texts_dict[f'{index}.txt'])
+            dictionary = {
+                'sentiment': sentiment,
+                'positive_words%': positive_words,
+                'negative_words%': negative_words,
+                'clean_text': cleaned_text
+            }
+            rows_list.append(dictionary)
+        except KeyError:
+            print(f'KeyError on index: {index}')
 
-        rows_list.append(dictionary)
-        print(f'Index: {index}')
-
-    df = pd.concat([df.reset_index(drop=True), pd.DataFrame(rows_list).reset_index(drop=True)], axis=1)
-    df.to_csv('data/sentiment.csv')
-    df['clean_text'] = df['content'].apply(lambda x: clean_text(x))
+    df = pd.concat([df.reset_index(drop=True), pd.DataFrame(
+        rows_list).reset_index(drop=True)], axis=1)
     df.to_csv('data/clean.csv')
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -131,16 +92,16 @@ def create_features(df: pd.DataFrame):
     tfidf_test = tfidf_vect_fit.transform(X_test_clean_joined)
 
     X_train_vect = pd.concat([X_train[
-                                  ['uppercase%', 'exclamation_mark%', 'question_mark%', 'quotation_mark%',
-                                   'punctuation%',
-                                   'length', 'sentiment', 'positive_words%', 'negative_words%']].reset_index(drop=True),
-                              pd.DataFrame(tfidf_train.toarray())], axis=1)
+        ['uppercase%', 'exclamation_mark%', 'question_mark%', 'quotation_mark%',
+         'punctuation%',
+         'length', 'sentiment', 'positive_words%', 'negative_words%']].reset_index(drop=True),
+        pd.DataFrame(tfidf_train.toarray())], axis=1)
 
     X_test_vect = pd.concat([X_test[
-                                 ['uppercase%', 'exclamation_mark%', 'question_mark%', 'quotation_mark%',
-                                  'punctuation%',
-                                  'length', 'sentiment', 'positive_words%', 'negative_words%']].reset_index(drop=True),
-                             pd.DataFrame(tfidf_test.toarray())], axis=1)
+        ['uppercase%', 'exclamation_mark%', 'question_mark%', 'quotation_mark%',
+         'punctuation%',
+         'length', 'sentiment', 'positive_words%', 'negative_words%']].reset_index(drop=True),
+        pd.DataFrame(tfidf_test.toarray())], axis=1)
 
     X_train_vect.to_csv('data/X_train_tfidf.csv', index=False, header=True)
     X_test_vect.to_csv('data/X_test_tfidf.csv', index=False, header=True)
@@ -174,12 +135,27 @@ def create_selected_features():
 
 
 def create_selected_features_for_single_text(text: str) -> pd.DataFrame:
-    d = {
-        'punctuation%': [count_punctuation(text)],
-        'length': [count_text_length(text)],
-        'sentiment': [get_sentiment(text)],
-        'positive_words%': [count_positive_words()]
-    }
-    selected_features = pd.DataFrame(d).iloc[0]
+    try:
+        with open(f'{TEMP_FILE}.txt', 'w') as temp_file:
+            temp_file.write(text)
+        sentiment_dict = get_sentiment()
+        sentiment, positive_words, negative_words = parse_sentiment(
+            sentiment_dict)
+        # lemmatized_dict = lemmatize()
+        # cleaned_text = parse_lemmatization(lemmatized_dict)
+        selected_features = pd.DataFrame(
+            {
+                'punctuation%': [count_punctuation(text)],
+                'length': [count_text_length(text)],
+                'sentiment': [sentiment],
+                'positive_words%': [positive_words],
+                # 'negative_words%': [negative_words],
+                # 'clean_text': cleaned_text,
+            }
+        ).iloc[0]
+    except Exception as e:
+        print(e)
+    finally:
+        os.remove(f'{TEMP_FILE}.txt')
 
     return selected_features
